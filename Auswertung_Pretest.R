@@ -161,7 +161,7 @@ boxplot(
 
 
 #Histogramm der Ausführlichkeit von Frage 101
-hist(daten101$Ausf_4,
+hist(daten101$Ausf,
      ylab = "Häufigkeit",
      xlab = "Anzahl der Zeichen inkl. Leerzeichen",
      main ="Histogramm der Ausführlichkeit bei 'Wer darf wählen'")
@@ -327,3 +327,4 @@ boxplot(
   ylab = "Zeichenanzahl der Antwort inkl. Leerzeichen",
   main= "Antwortlänge für Frage 205 nach KI-Modell sortiert "
 )
+
