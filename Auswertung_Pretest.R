@@ -130,6 +130,15 @@ names(daten104)[names(daten104) == "Ausführlichkeit 3"] <- "Ausf"
 names(daten104)[names(daten104) == "KI-Modell"] <- "KI"
 names(daten105)[names(daten105) == "Ausführlichkeit 5"] <- "Ausf"
 names(daten105)[names(daten105) == "KI-Modell"] <- "KI"
+#Eindeutiger Bennenung der ausführlichkeit bei 201
+names(daten201)[names(daten201) == "Ausführlichkeit  2.1"] <- "Ausf_CDU"
+names(daten201)[names(daten201) == "Ausführlichkeit  2.2"] <- "Ausf_SPD"
+names(daten201)[names(daten201) == "Ausführlichkeit  2.3"] <- "Ausf_AFD"
+names(daten201)[names(daten201) == "Ausführlichkeit  2.4"] <- "Ausf_Grüne"
+names(daten201)[names(daten201) == "Ausführlichkeit  2.5"] <- "Ausf_Linke"
+names(daten201)[names(daten201) == "Ausführlichkeit  2.6"] <- "Ausf_FDP"
+names(daten201)[names(daten201) == "Ausführlichkeit  2.7"] <- "Ausf_FW"
+names(daten201)[names(daten201) == "Ausführlichkeit  2.8"] <- "Ausf_sonsitige"
 names(daten201)[names(daten201) == "Ausführlichkeit  3"] <- "Ausf_insgesamt"
 names(daten201)[names(daten201) == "KI-Modell"] <- "KI"
 names(daten202)[names(daten202) == "Ausführlichkeit 4"] <- "Ausf"
@@ -327,4 +336,3 @@ boxplot(
   ylab = "Zeichenanzahl der Antwort inkl. Leerzeichen",
   main= "Antwortlänge für Frage 205 nach KI-Modell sortiert "
 )
-
