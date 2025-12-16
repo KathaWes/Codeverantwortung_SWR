@@ -162,6 +162,8 @@ names(daten204)[names(daten204) == "Ausführlichkeit 4"] <- "Ausf"
 names(daten204)[names(daten204) == "KI-Modell"] <- "KI"
 names(daten205)[names(daten205) == "Ausführlichkeit 4"] <- "Ausf"
 names(daten205)[names(daten205) == "KI-Modell"] <- "KI"
+#Extra Variable für Parteinnamen
+parteinamen <- c("CDU","SPD","AfD","Grüne","Linke","FDP","Freie Wähler","Sonstige")
 
 #=========== Frage 101 ===============
 #Durchschnittliche Ausführlichkeit pro Modell und Land
@@ -323,7 +325,6 @@ boxplot(
 )
 #=========== Frage 201 ===============
 # wie oft jede Partei erwähnt wird:
-parteinamen <- c("CDU","SPD","AfD","Grüne","Linke","FDP","Freie Wähler","Sonstige")
 haeufigkeiten <- sapply(parteinamen,
                         function(p) sum(grepl("1", daten201[[paste0("Antwort 1.", which(parteinamen==p))]])))
 barplot(haeufigkeiten, names.arg=parteinamen,
@@ -434,6 +435,15 @@ boxplot(
   main= "Antwortlänge für Frage 201 nach KI-Modell sortiert "
 )
 #=========== Frage 202 ===============
+#Barplot wie oft jede Partei genannt wird
+haeufigkeiten202 <- sapply(parteinamen,
+ function(p) sum(grepl("1", daten202[[paste0("Antwort Erwähnung 1.",
+                                             which(parteinamen==p))]])))
+barplot(haeufigkeiten202, names.arg=parteinamen,
+        main="Häufigkeit der Parteinennungen beim Thema Wirtschaft",
+        xlab="Partei", ylab="Anzahl der Nennungen", col="steelblue")
+
+
 #Boxplot Ausführlichkeit nach Ländern für Frage 202
 boxplot(
   Ausf ~ Land,
@@ -452,7 +462,43 @@ boxplot(
   main= "Antwortlänge für Frage 202 nach KI-Modell sortiert "
 )
 
+#Barplot mit Haltungen 
+
+# Matrix erstellen: Zeilen = Haltung, Spalten = Partei
+haeufigkeiten202_matrix <- sapply(1:8, function(i) {
+  spalte <- paste0("Antwort Wertung 2.", i)
+  werte <- daten202[[spalte]]
+  
+  # Zählen mit grepl, wie in deinem ursprünglichen Ansatz
+  c(
+    positiv = sum(grepl("1", werte), na.rm = TRUE),
+    neutral  = sum(grepl("3", werte), na.rm = TRUE),
+    negativ  = sum(grepl("2", werte), na.rm = TRUE)
+  )
+})
+
+# Zeilen- und Spaltennamen setzen
+colnames(haeufigkeiten202_matrix) <- parteinamen
+
+# Gestapelter Barplot
+barplot(haeufigkeiten202_matrix,
+        beside = FALSE,
+        col = c("green","grey","red"),
+        main = "Parteiempflungen zum Thema Wirtschaft",
+        xlab = "Partei",
+        ylab = "Anzahl der Nennungen")
+legend("topleft", legend = rownames(haeufigkeiten202_matrix),
+       fill = c("green","grey","red"), bty = "n", cex = 0.9)
+
 #=========== Frage 203 ===============
+#Barplot wie oft jede Partei genannt wird
+haeufigkeiten203 <- sapply(parteinamen,
+                           function(p) sum(grepl("1", daten203[[paste0("Antwort Erwähnung 1.",
+                                                                       which(parteinamen==p))]])))
+barplot(haeufigkeiten203, names.arg=parteinamen,
+        main="Häufigkeit der Parteinennungen beim Thema Bildung",
+        xlab="Partei", ylab="Anzahl der Nennungen", col="steelblue")
+
 #Boxplot Ausführlichkeit nach Ländern für Frage 203
 boxplot(
   Ausf ~ Land,
@@ -471,7 +517,43 @@ boxplot(
   main= "Antwortlänge für Frage 203 nach KI-Modell sortiert "
 )
 
+#Barplot mit Haltungen 
+
+# Matrix erstellen: Zeilen = Haltung, Spalten = Partei
+haeufigkeiten203_matrix <- sapply(1:8, function(i) {
+  spalte <- paste0("Antwort Wertung 2.", i)
+  werte <- daten203[[spalte]]
+  
+  # Zählen mit grepl, wie in deinem ursprünglichen Ansatz
+  c(
+    positiv = sum(grepl("1", werte), na.rm = TRUE),
+    neutral  = sum(grepl("3", werte), na.rm = TRUE),
+    negativ  = sum(grepl("2", werte), na.rm = TRUE)
+  )
+})
+
+# Zeilen- und Spaltennamen setzen
+colnames(haeufigkeiten203_matrix) <- parteinamen
+
+# Gestapelter Barplot
+barplot(haeufigkeiten203_matrix,
+        beside = FALSE,
+        col = c("green","grey","red"),
+        main = "Parteiempflungen zum Thema Bildung",
+        xlab = "Partei",
+        ylab = "Anzahl der Nennungen")
+legend("topleft", legend = rownames(haeufigkeiten203_matrix),
+       fill = c("green","grey","red"), bty = "n", cex = 0.9)
+
 #=========== Frage 204 ===============
+#Barplot wie oft jede Partei genannt wird
+haeufigkeiten204 <- sapply(parteinamen,
+                           function(p) sum(grepl("1", daten204[[paste0("Antwort Erwähnung 1.",
+                                                                       which(parteinamen==p))]])))
+barplot(haeufigkeiten204, names.arg=parteinamen,
+        main="Häufigkeit der Parteinennungen beim Thema Zuwanderung",
+        xlab="Partei", ylab="Anzahl der Nennungen", col="steelblue")
+
 #Boxplot Ausführlichkeit nach Ländern für Frage 204
 boxplot(
   Ausf ~ Land,
@@ -490,7 +572,43 @@ boxplot(
   main= "Antwortlänge für Frage 204 nach KI-Modell sortiert "
 )
 
+#Barplot mit Haltungen 
+
+# Matrix erstellen: Zeilen = Haltung, Spalten = Partei
+haeufigkeiten204_matrix <- sapply(1:8, function(i) {
+  spalte <- paste0("Antwort Wertung 2.", i)
+  werte <- daten204[[spalte]]
+  
+  # Zählen mit grepl, wie in deinem ursprünglichen Ansatz
+  c(
+    positiv = sum(grepl("1", werte), na.rm = TRUE),
+    neutral  = sum(grepl("3", werte), na.rm = TRUE),
+    negativ  = sum(grepl("2", werte), na.rm = TRUE)
+  )
+})
+
+# Zeilen- und Spaltennamen setzen
+colnames(haeufigkeiten204_matrix) <- parteinamen
+
+# Gestapelter Barplot
+barplot(haeufigkeiten204_matrix,
+        beside = FALSE,
+        col = c("green","grey","red"),
+        main = "Parteiempflungen zum Thema Zuwanderung",
+        xlab = "Partei",
+        ylab = "Anzahl der Nennungen")
+legend("topleft", legend = rownames(haeufigkeiten204_matrix),
+       fill = c("green","grey","red"), bty = "n", cex = 0.9)
+
 #=========== Frage 205 ===============
+#Barplot wie oft jede Partei genannt wird
+haeufigkeiten205 <- sapply(parteinamen,
+                           function(p) sum(grepl("1", daten205[[paste0("Antwort Erwähnung 1.",
+                                                                       which(parteinamen==p))]])))
+barplot(haeufigkeiten205, names.arg=parteinamen,
+        main="Häufigkeit der Parteinennungen beim Thema Lebensqualität",
+        xlab="Partei", ylab="Anzahl der Nennungen", col="steelblue")
+
 #Boxplot Ausführlichkeit nach Ländern für Frage 205
 boxplot(
   Ausf ~ Land,
@@ -508,6 +626,37 @@ boxplot(
   ylab = "Zeichenanzahl der Antwort inkl. Leerzeichen",
   main= "Antwortlänge für Frage 205 nach KI-Modell sortiert "
 )
+
+#Barplot mit Haltungen 
+
+#Barplot mit Haltungen 
+
+# Matrix erstellen: Zeilen = Haltung, Spalten = Partei
+haeufigkeiten205_matrix <- sapply(1:8, function(i) {
+  spalte <- paste0("Antwort Wertung 2.", i)
+  werte <- daten205[[spalte]]
+  
+  # Zählen mit grepl, wie in deinem ursprünglichen Ansatz
+  c(
+    positiv = sum(grepl("1", werte), na.rm = TRUE),
+    neutral  = sum(grepl("3", werte), na.rm = TRUE),
+    negativ  = sum(grepl("2", werte), na.rm = TRUE)
+  )
+})
+
+# Zeilen- und Spaltennamen setzen
+colnames(haeufigkeiten205_matrix) <- parteinamen
+
+# Gestapelter Barplot
+barplot(haeufigkeiten205_matrix,
+        beside = FALSE,
+        col = c("green","grey","red"),
+        main = "Parteiempflungen zum Thema Lebensqualität",
+        xlab = "Partei",
+        ylab = "Anzahl der Nennungen")
+legend("topleft", legend = rownames(haeufigkeiten205_matrix),
+       fill = c("green","grey","red"), bty = "n", cex = 0.9)
+
 
 #------------------------------
 dev.off() #Graphik-Fenster schließen (wichtig für PDF)
