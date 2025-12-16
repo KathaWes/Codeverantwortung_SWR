@@ -1,4 +1,5 @@
 #--------------------------------------------
+
 # Plots in Pdf speichern
 pdf("KIPlots.pdf", width = 8, height = 5)
 par("mar" = c(5, 4, 1.5, 2))
@@ -8,6 +9,8 @@ par(cex.lab = 1.3, cex.axis = 1.3)
 library(readr)
 library(dplyr)
 library(ggplot2)
+print(setwd(dirname(rstudioapi::getSourceEditorContext()$path)))
+
 #Einlesen der ersten Tabelle
 daten101 <- read_csv("Fragenauswertung - 101 Wer darf wählen_.csv")
 #Einlesen der weiteren Tabllen 
@@ -317,6 +320,13 @@ boxplot(
   main= "Antwortlänge für Frage 105 nach KI-Modell sortiert "
 )
 #=========== Frage 201 ===============
+# wie oft jede Partei erwähnt wird:
+parteinamen <- c("CDU","SPD","AfD","Grüne","Linke","FDP","Freie Wähler","Sonstige")
+haeufigkeiten <- sapply(parteinamen,
+                        function(p) sum(grepl("1", daten201[[paste0("Antwort 1.", which(parteinamen==p))]])))
+barplot(haeufigkeiten, names.arg=parteinamen,
+        main="Häufigkeit der Parteinennungen",
+        xlab="Partei", ylab="Anzahl der Nennungen", col="steelblue")
 
 #Boxplot Ausführlichkeit nach Ländern für Frage 201
 boxplot(
