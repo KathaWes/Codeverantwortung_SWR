@@ -152,6 +152,7 @@ names(daten201)[names(daten201) == "Ausführlichkeit  2.7"] <- "Ausf_FW"
 names(daten201)[names(daten201) == "Ausführlichkeit  2.8"] <- "Ausf_sonsitige"
 names(daten201)[names(daten201) == "Ausführlichkeit  3"] <- "Ausf_insgesamt"
 names(daten201)[names(daten201) == "KI-Modell"] <- "KI"
+#Weitere Verkürzung der Variablennamen 
 names(daten202)[names(daten202) == "Ausführlichkeit 4"] <- "Ausf"
 names(daten202)[names(daten202) == "KI-Modell"] <- "KI"
 names(daten203)[names(daten203) == "Ausführlichkeit 4"] <- "Ausf"
