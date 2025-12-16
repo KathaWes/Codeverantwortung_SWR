@@ -9,6 +9,7 @@ par(cex.lab = 1.3, cex.axis = 1.3)
 library(readr)
 library(dplyr)
 library(ggplot2)
+library(tidyr)
 print(setwd(dirname(rstudioapi::getSourceEditorContext()$path)))
 
 #Einlesen der ersten Tabelle
@@ -145,11 +146,11 @@ names(daten105)[names(daten105) == "KI-Modell"] <- "KI"
 names(daten201)[names(daten201) == "Ausführlichkeit  2.1"] <- "Ausf_CDU"
 names(daten201)[names(daten201) == "Ausführlichkeit  2.2"] <- "Ausf_SPD"
 names(daten201)[names(daten201) == "Ausführlichkeit  2.3"] <- "Ausf_AFD"
-names(daten201)[names(daten201) == "Ausführlichkeit  2.4"] <- "Ausf_Grüne"
+names(daten201)[names(daten201) == "Ausführlichkeit  2.4"] <- "Ausf_Gruene"
 names(daten201)[names(daten201) == "Ausführlichkeit  2.5"] <- "Ausf_Linke"
 names(daten201)[names(daten201) == "Ausführlichkeit  2.6"] <- "Ausf_FDP"
 names(daten201)[names(daten201) == "Ausführlichkeit  2.7"] <- "Ausf_FW"
-names(daten201)[names(daten201) == "Ausführlichkeit  2.8"] <- "Ausf_sonsitige"
+names(daten201)[names(daten201) == "Ausführlichkeit  2.8"] <- "Ausf_sonstige"
 names(daten201)[names(daten201) == "Ausführlichkeit  3"] <- "Ausf_insgesamt"
 names(daten201)[names(daten201) == "KI-Modell"] <- "KI"
 #Weitere Verkürzung der Variablennamen 
@@ -329,6 +330,92 @@ barplot(haeufigkeiten, names.arg=parteinamen,
         main="Häufigkeit der Parteinennungen",
         xlab="Partei", ylab="Anzahl der Nennungen", col="steelblue")
 
+#Boxplot Ausführlichkeit der Partein
+parteifarben <- c(
+  "grey30",        # CDU
+  "red",          # SPD
+  "deepskyblue3", # AfD
+  "#64A12D",    # Grüne
+  "purple",       # Linke
+  "gold",         # FDP
+  "orange",       # Freie Wähler
+  "grey60"        # Sonstige
+)
+boxplot(
+  daten201[, c("Ausf_CDU", "Ausf_SPD", "Ausf_AFD",
+               "Ausf_Gruene", "Ausf_Linke", "Ausf_FDP",
+               "Ausf_FW", "Ausf_sonstige")],
+  las=1,
+  names = parteinamen,
+  col = parteifarben,
+  main = "Vergleich der Antwortlänge je nach Partei",
+  ylab = "Zeichenanzahl der Antwort"
+)
+
+#===========
+
+
+#Aufteilung nach Bundesländern
+daten_long <- daten201 |>
+  pivot_longer(
+    cols = c("Ausf_CDU", "Ausf_SPD", "Ausf_AFD",
+             "Ausf_Gruene", "Ausf_Linke", "Ausf_FDP",
+             "Ausf_FW", "Ausf_sonstige"),
+    names_to = "Partei",
+    values_to = "Antwortlaenge"
+  )
+
+# Schöne Parteinamen
+daten_long$Partei <- factor(
+  daten_long$Partei,
+  levels = c("Ausf_CDU", "Ausf_SPD", "Ausf_AFD",
+             "Ausf_Gruene", "Ausf_Linke", "Ausf_FDP",
+             "Ausf_FW", "Ausf_sonstige"),
+  labels = parteinamen
+)
+
+par(mar = c(4, 5, 6, 1))   # unten, links, oben, rechts
+
+bp <-boxplot(
+  Antwortlaenge ~ interaction(Partei, Land, lex.order = TRUE),
+  data = daten_long,
+  col = rep(parteifarben, each = 2),
+  border = "black",
+  las = 1,
+  xaxt = "n",
+  main = "Antwortlänge nach Partei und Land",
+  ylab = "Zeichenanzahl der Antwort",
+  xlab = ""
+)
+
+# Reihenfolge der Boxen entspricht bp$names
+laender <- sub(".*\\.", "", bp$names)  # extrahiert Land aus "Partei.Land"
+axis(
+  side = 1,
+  at = 1:length(bp$names),
+  labels = laender,
+  tick = FALSE,
+  cex.axis = 0.71
+)
+# Parteinamen extrahieren
+parteien <- sub("\\..*", "", bp$names)
+
+# Mittelpunkte der Zweierpaare
+unique_parteien <- unique(parteien)
+mitten <- sapply(unique_parteien, function(p) mean(which(parteien == p)))
+
+axis(
+  side = 3,
+  at = mitten,
+  labels = unique_parteien,
+  tick = FALSE,
+  cex.axis = 0.9
+)
+
+#Zurücksetzen der Grafikeinstellungen 
+par("mar" = c(5, 4, 1.5, 2))
+par(cex.lab = 1.3, cex.axis = 1.3)
+#===========
 #Boxplot Ausführlichkeit nach Ländern für Frage 201
 boxplot(
   Ausf_insgesamt ~ Land,
