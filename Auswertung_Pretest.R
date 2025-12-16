@@ -1,5 +1,13 @@
+#--------------------------------------------
+# Plots in Pdf speichern
+pdf("KIPlots.pdf", width = 8, height = 5)
+par("mar" = c(5, 4, 1.5, 2))
+par(cex.lab = 1.3, cex.axis = 1.3)
+#-----------------------------------------
+
 library(readr)
 library(dplyr)
+library(ggplot2)
 #Einlesen der ersten Tabelle
 daten101 <- read_csv("Fragenauswertung - 101 Wer darf wählen_.csv")
 #Einlesen der weiteren Tabllen 
@@ -150,6 +158,63 @@ names(daten204)[names(daten204) == "KI-Modell"] <- "KI"
 names(daten205)[names(daten205) == "Ausführlichkeit 4"] <- "Ausf"
 names(daten205)[names(daten205) == "KI-Modell"] <- "KI"
 
+#=========== Frage 101 ===============
+#Durchschnittliche Ausführlichkeit pro Modell und Land
+aggregate(Ausf ~ KI + Land,
+          data = daten101,
+          FUN = mean)
+#             KI              Land     Ausf
+# 1 Chat-GPT 5.1 Baden-Württenberg 1466.400
+# 2  Gemini FAST Baden-Württenberg 1580.750
+# 3 Chat-GPT 5.1   Rheinland-Pfalz 1474.200
+# 4  Gemini FAST   Rheinland-Pfalz 1527.167
+
+# Häufigkeit korrekter Antworten
+table(daten101$KI, daten101$'Korrekteit 2.1')
+
+  #              1 - diese Antwort ist richtig
+  # Chat-GPT 5.1                             7
+  # Gemini FAST                             10
+  #             
+  #              2 - diese Antwort ist falsch
+  # Chat-GPT 5.1                            3
+  # Gemini FAST                             0
+
+# Zusammenhang zwischen Modell und Korrektheit
+mosaicplot(~ KI + `Korrekteit 2.1`,
+           data=daten101,
+           color=TRUE,
+           main="Zusammenhang zwischen Modell und Korrektheit - Frage 101")
+
+#Antwortqualität nach Modell und Land
+ggplot(daten101,
+       aes(x=`Korrekteit 2.1`, fill=KI)) +
+  geom_bar(position="dodge") +
+  facet_wrap(~Land) +
+  labs(title="Antwortqualität nach Modell und Land - Frage 101",
+       x="Bewertung der Antwort", y="Anzahl")
+
+# Zusammenhang zwischen Korrektheit und Ausführlichkeit
+boxplot(Ausf ~ `Korrekteit 2.1`,
+        data = daten101,
+        xlab="Korrektheit",
+        ylab="Zeichenanzahl",
+        main="Antwortlänge nach Richtigkeit")
+
+daten101$Korr_num <- ifelse(daten101$`Korrekteit 2.1` == 
+                              "1 - diese Antwort ist richtig", 1, 0)
+cor(daten101$Ausf, daten101$Korr_num)
+# [1] 0.3493144
+#-> Längere Antworten sind tendenziell korrekter.
+
+#Häufigkeit genannter Kontexte
+for (var in c("Kontext 3.1","Kontext 3.2","Kontext 3.3",
+              "Kontext 3.4","Kontext 3.5")) {
+  cat("\n", var, "\n")
+  print(table(daten101[[var]]))
+}
+
+
 #Boxplot Ausführlichkeit nach Ländern für Frage 101
 boxplot(
   Ausf ~ Land,
@@ -175,6 +240,7 @@ hist(daten101$Ausf,
      xlab = "Anzahl der Zeichen inkl. Leerzeichen",
      main ="Histogramm der Ausführlichkeit bei 'Wer darf wählen'")
 
+#=========== Frage 102 ===============
 #Boxplot Ausführlichkeit nach Ländern für Frage 102
 boxplot(
   Ausf ~ Land,
@@ -192,6 +258,7 @@ boxplot(
   ylab = "Zeichenanzahl der Antwort inkl. Leerzeichen",
   main= "Antwortlänge für Frage 102 nach KI-Modell sortiert "
 )
+#=========== Frage 103 ===============
 
 #Boxplot Ausführlichkeit nach Ländern für Frage 103
 boxplot(
@@ -211,6 +278,8 @@ boxplot(
   main= "Antwortlänge für Frage 103 nach KI-Modell sortiert "
 )
 
+#=========== Frage 104 ===============
+
 #Boxplot Ausführlichkeit nach Ländern für Frage 104
 boxplot(
   Ausf ~ Land,
@@ -229,6 +298,7 @@ boxplot(
   main= "Antwortlänge für Frage 104 nach KI-Modell sortiert "
 )
 
+#=========== Frage 105 ===============
 #Boxplot Ausführlichkeit nach Ländern für Frage 105
 boxplot(
   Ausf ~ Land,
@@ -246,6 +316,7 @@ boxplot(
   ylab = "Zeichenanzahl der Antwort inkl. Leerzeichen",
   main= "Antwortlänge für Frage 105 nach KI-Modell sortiert "
 )
+#=========== Frage 201 ===============
 
 #Boxplot Ausführlichkeit nach Ländern für Frage 201
 boxplot(
@@ -264,7 +335,7 @@ boxplot(
   ylab = "Zeichenanzahl der Antwort inkl. Leerzeichen",
   main= "Antwortlänge für Frage 201 nach KI-Modell sortiert "
 )
-
+#=========== Frage 202 ===============
 #Boxplot Ausführlichkeit nach Ländern für Frage 202
 boxplot(
   Ausf ~ Land,
@@ -283,6 +354,7 @@ boxplot(
   main= "Antwortlänge für Frage 202 nach KI-Modell sortiert "
 )
 
+#=========== Frage 203 ===============
 #Boxplot Ausführlichkeit nach Ländern für Frage 203
 boxplot(
   Ausf ~ Land,
@@ -301,6 +373,7 @@ boxplot(
   main= "Antwortlänge für Frage 203 nach KI-Modell sortiert "
 )
 
+#=========== Frage 204 ===============
 #Boxplot Ausführlichkeit nach Ländern für Frage 204
 boxplot(
   Ausf ~ Land,
@@ -319,6 +392,7 @@ boxplot(
   main= "Antwortlänge für Frage 204 nach KI-Modell sortiert "
 )
 
+#=========== Frage 205 ===============
 #Boxplot Ausführlichkeit nach Ländern für Frage 205
 boxplot(
   Ausf ~ Land,
@@ -336,3 +410,6 @@ boxplot(
   ylab = "Zeichenanzahl der Antwort inkl. Leerzeichen",
   main= "Antwortlänge für Frage 205 nach KI-Modell sortiert "
 )
+
+#------------------------------
+dev.off() #Graphik-Fenster schließen (wichtig für PDF)
