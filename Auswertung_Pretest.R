@@ -244,6 +244,29 @@ hist(daten101$Ausf,
      main ="Histogramm der Ausführlichkeit bei 'Wer darf wählen'")
 
 #=========== Frage 102 ===============
+# Häufigkeit korrekter Antworten
+korrektheit102 <- daten102 %>%
+  group_by(KI, `Korrektheit 2`) %>%
+  summarise(Anzahl = n(), .groups = "drop") %>%
+  group_by(KI) %>%
+  mutate(Prozent = Anzahl / sum(Anzahl) * 100)
+
+#korrektheit102
+#KI           `Korrektheit 2`                         Anzahl Prozent
+# 1 Chat-GPT 5.1 1 - diese Antwort ist richtig & vollst…     8      80
+#2 Chat-GPT 5.1 2 - diese Antwort ist richtig & unvoll…      2      20
+#3 Gemini FAST  1 - diese Antwort ist richtig & vollst…     10     100
+
+#Herausfilter wo die unvollstädigkeit gelegen hat
+unvollstaendig102 <- daten102 %>%
+  filter(grepl("2", `Korrektheit 2`)) %>%
+  select(KI, `Antwort 1.1`)
+
+#unvollstaendig102
+#KI           `Antwort 1.1` 
+#1 Chat-GPT 5.1 1- im Wahlbüro
+#2 Chat-GPT 5.1 1- im Wahlbüro
+
 #Boxplot Ausführlichkeit nach Ländern für Frage 102
 boxplot(
   Ausf ~ Land,
@@ -262,6 +285,18 @@ boxplot(
   main= "Antwortlänge für Frage 102 nach KI-Modell sortiert "
 )
 #=========== Frage 103 ===============
+
+korrektheit103 <- daten103 %>%
+  filter(!is.na(`Korrektheit 1.2`)) %>%
+  group_by(KI, `Korrektheit 1.2`) %>%
+  summarise(Anzahl = n(),.groups = "drop") %>%
+  group_by(KI) %>%
+  mutate(Prozent = Anzahl / sum(Anzahl) * 100)
+korrektheit103
+#  KI           `Korrektheit 1.2`             Anzahl Prozent
+#1 Chat-GPT 5.1 1 - diese Antwort ist richtig      9     100
+#2 Gemini FAST  1 - diese Antwort ist richtig     10     100
+
 
 #Boxplot Ausführlichkeit nach Ländern für Frage 103
 boxplot(
