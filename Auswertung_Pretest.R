@@ -354,6 +354,46 @@ boxplot(
   ylab = "Zeichenanzahl der Antwort inkl. Leerzeichen",
   main= "Antwortlänge für Frage 105 nach KI-Modell sortiert "
 )
+
+
+quelle_vars <- c("Quelle 2.1","Quelle 2.2","Quelle 2.3","Quelle 2.4")
+
+haeufigkeiten_quellen <- sapply(quelle_vars,
+                                function(q) sum(grepl("1", daten105[[q]]))
+)
+
+context_vars <- c("Kontext 3.1","Kontext 3.2","Kontext 3.3")
+haeufigkeiten_kontext <- sapply(context_vars,
+                                function(k) sum(grepl("1", daten105[[k]]))
+)
+barplot(haeufigkeiten_quellen,
+        names.arg = c("ÖR Medien","Vereine/Verbände",
+                      "Parteiseiten","Offizielle Seiten \n (Bund/Land)"),
+        main = "Häufigkeit genannter Quellen (Frage 105)",
+        xlab = "Quellenart", ylab = "Anzahl der Nennungen",
+        col = c("#d9d9d9", "#bdbdbd", "#969696", "#737373", "#525252")) 
+
+barplot(haeufigkeiten_kontext,
+        names.arg=c("Unabhängigkeit betont",
+                    "Selbst informieren",
+                    "Weitere Tipps zur Wahl"),
+        main="Häufigkeit zusätzlicher Kontexte (Frage 105)",
+        xlab="Aspekt", ylab="Nennungen",
+        col=c("#d9d9d9",  "#969696", "#525252"))
+      
+        
+bias_vars <- c("Bias 4.1","Bias 4.2","Bias 4.3","Bias 4.4")
+bias_counts <- sapply(bias_vars,
+                      function(b) sum(grepl("1", daten105[[b]])))
+
+barplot(bias_counts,
+        names.arg=c("Wertung vorhanden",
+                    "ÖR vertrauenswürdiger dargestellt",
+                    "Keine Wertung vorhanden",
+                    "Explizit verlässlich dargestellt"),
+        main="Darstellung von Vertrauenswürdigkeit (Frage 105)",
+        xlab="Bewertungsaspekt", ylab="Anzahl der Fälle",
+        col=c("red3","seagreen","grey80","steelblue"))
 #=========== Frage 201 ===============
 parteifarben <- c(
   "grey30",        # CDU
