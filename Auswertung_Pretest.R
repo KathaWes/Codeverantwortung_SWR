@@ -1,7 +1,7 @@
 #--------------------------------------------
 
 # Plots in Pdf speichern
-pdf("KIPlots.pdf", width = 8, height = 5)
+pdf("KIPlots.pdf", width = 10, height = 5)
 par("mar" = c(5, 4, 1.5, 2))
 par(cex.lab = 1.3, cex.axis = 1.3)
 #-----------------------------------------
@@ -179,13 +179,9 @@ aggregate(Ausf ~ KI + Land,
 # Häufigkeit korrekter Antworten
 table(daten101$KI, daten101$'Korrekteit 2.1')
 
-  #              1 - diese Antwort ist richtig
-  # Chat-GPT 5.1                             7
-  # Gemini FAST                             10
-  #             
-  #              2 - diese Antwort ist falsch
-  # Chat-GPT 5.1                            3
-  # Gemini FAST                             0
+#              1 - diese Antwort ist richtig  2 - diese Antwort ist falsch
+# Chat-GPT 5.1                             8                            2
+# Gemini FAST                             10                            0
 
 # Zusammenhang zwischen Modell und Korrektheit
 mosaicplot(~ KI + `Korrekteit 2.1`,
@@ -324,14 +320,6 @@ boxplot(
   main= "Antwortlänge für Frage 105 nach KI-Modell sortiert "
 )
 #=========== Frage 201 ===============
-# wie oft jede Partei erwähnt wird:
-haeufigkeiten <- sapply(parteinamen,
-                        function(p) sum(grepl("1", daten201[[paste0("Antwort 1.", which(parteinamen==p))]])))
-barplot(haeufigkeiten, names.arg=parteinamen,
-        main="Häufigkeit der Parteinennungen",
-        xlab="Partei", ylab="Anzahl der Nennungen", col="steelblue")
-
-#Boxplot Ausführlichkeit der Partein
 parteifarben <- c(
   "grey30",        # CDU
   "red",          # SPD
@@ -342,6 +330,15 @@ parteifarben <- c(
   "orange",       # Freie Wähler
   "grey60"        # Sonstige
 )
+# wie oft jede Partei erwähnt wird:
+haeufigkeiten <- sapply(parteinamen,
+                        function(p) sum(grepl("1", daten201[[paste0("Antwort 1.", which(parteinamen==p))]])))
+barplot(haeufigkeiten, names.arg=parteinamen,
+        main="Häufigkeit der Parteinennungen",
+        xlab="Partei", ylab="Anzahl der Nennungen", col=parteifarben)
+
+
+#Boxplot Ausführlichkeit der Partein
 boxplot(
   daten201[, c("Ausf_CDU", "Ausf_SPD", "Ausf_AFD",
                "Ausf_Gruene", "Ausf_Linke", "Ausf_FDP",
@@ -389,15 +386,22 @@ bp <-boxplot(
   xlab = ""
 )
 
-# Reihenfolge der Boxen entspricht bp$names
-laender <- sub(".*\\.", "", bp$names)  # extrahiert Land aus "Partei.Land"
-axis(
-  side = 1,
-  at = 1:length(bp$names),
-  labels = laender,
-  tick = FALSE,
-  cex.axis = 0.71
-)
+# Neue Labels definieren: abwechselnd BaWü / RP für jede Partei
+axis(1,
+     at = seq_along(bp$names),
+     labels = rep(c("BaWü","RP"), times=length(unique(daten_long$Partei))),
+     las=0.7,
+     tick = FALSE)
+# 
+# # Reihenfolge der Boxen entspricht bp$names
+# laender <- sub(".*\\.", "", bp$names)  # extrahiert Land aus "Partei.Land"
+# axis(
+#   side = 1,
+#   at = 1:length(bp$names),
+#   labels = laender,
+#   tick = FALSE,
+#   cex.axis = 0.71
+# )
 # Parteinamen extrahieren
 parteien <- sub("\\..*", "", bp$names)
 
@@ -441,7 +445,7 @@ haeufigkeiten202 <- sapply(parteinamen,
                                              which(parteinamen==p))]])))
 barplot(haeufigkeiten202, names.arg=parteinamen,
         main="Häufigkeit der Parteinennungen beim Thema Wirtschaft",
-        xlab="Partei", ylab="Anzahl der Nennungen", col="steelblue")
+        xlab="Partei", ylab="Anzahl der Nennungen", col=parteifarben)
 
 
 #Boxplot Ausführlichkeit nach Ländern für Frage 202
@@ -483,12 +487,12 @@ colnames(haeufigkeiten202_matrix) <- parteinamen
 # Gestapelter Barplot
 barplot(haeufigkeiten202_matrix,
         beside = FALSE,
-        col = c("green","grey","red"),
+        col = c("green4","grey","red3"),
         main = "Parteiempflungen zum Thema Wirtschaft",
         xlab = "Partei",
         ylab = "Anzahl der Nennungen")
-legend("topleft", legend = rownames(haeufigkeiten202_matrix),
-       fill = c("green","grey","red"), bty = "n", cex = 0.9)
+legend("top", legend = rownames(haeufigkeiten202_matrix),
+       fill = c("green4","grey","red3"), bty = "n", cex = 0.9)
 
 #=========== Frage 203 ===============
 #Barplot wie oft jede Partei genannt wird
@@ -497,7 +501,7 @@ haeufigkeiten203 <- sapply(parteinamen,
                                                                        which(parteinamen==p))]])))
 barplot(haeufigkeiten203, names.arg=parteinamen,
         main="Häufigkeit der Parteinennungen beim Thema Bildung",
-        xlab="Partei", ylab="Anzahl der Nennungen", col="steelblue")
+        xlab="Partei", ylab="Anzahl der Nennungen", col= parteifarben)
 
 #Boxplot Ausführlichkeit nach Ländern für Frage 203
 boxplot(
@@ -538,12 +542,12 @@ colnames(haeufigkeiten203_matrix) <- parteinamen
 # Gestapelter Barplot
 barplot(haeufigkeiten203_matrix,
         beside = FALSE,
-        col = c("green","grey","red"),
+        col = c("green4","grey","red3"),
         main = "Parteiempflungen zum Thema Bildung",
         xlab = "Partei",
         ylab = "Anzahl der Nennungen")
 legend("topleft", legend = rownames(haeufigkeiten203_matrix),
-       fill = c("green","grey","red"), bty = "n", cex = 0.9)
+       fill = c("green4","grey","red3"), bty = "n", cex = 0.9)
 
 #=========== Frage 204 ===============
 #Barplot wie oft jede Partei genannt wird
@@ -552,7 +556,7 @@ haeufigkeiten204 <- sapply(parteinamen,
                                                                        which(parteinamen==p))]])))
 barplot(haeufigkeiten204, names.arg=parteinamen,
         main="Häufigkeit der Parteinennungen beim Thema Zuwanderung",
-        xlab="Partei", ylab="Anzahl der Nennungen", col="steelblue")
+        xlab="Partei", ylab="Anzahl der Nennungen", col= parteifarben)
 
 #Boxplot Ausführlichkeit nach Ländern für Frage 204
 boxplot(
@@ -593,12 +597,12 @@ colnames(haeufigkeiten204_matrix) <- parteinamen
 # Gestapelter Barplot
 barplot(haeufigkeiten204_matrix,
         beside = FALSE,
-        col = c("green","grey","red"),
+        col = c("green4","grey","red3"),
         main = "Parteiempflungen zum Thema Zuwanderung",
         xlab = "Partei",
         ylab = "Anzahl der Nennungen")
 legend("topleft", legend = rownames(haeufigkeiten204_matrix),
-       fill = c("green","grey","red"), bty = "n", cex = 0.9)
+       fill = c("green4","grey","red3"), bty = "n", cex = 0.9)
 
 #=========== Frage 205 ===============
 #Barplot wie oft jede Partei genannt wird
@@ -607,7 +611,7 @@ haeufigkeiten205 <- sapply(parteinamen,
                                                                        which(parteinamen==p))]])))
 barplot(haeufigkeiten205, names.arg=parteinamen,
         main="Häufigkeit der Parteinennungen beim Thema Lebensqualität",
-        xlab="Partei", ylab="Anzahl der Nennungen", col="steelblue")
+        xlab="Partei", ylab="Anzahl der Nennungen", col= parteifarben)
 
 #Boxplot Ausführlichkeit nach Ländern für Frage 205
 boxplot(
@@ -650,12 +654,12 @@ colnames(haeufigkeiten205_matrix) <- parteinamen
 # Gestapelter Barplot
 barplot(haeufigkeiten205_matrix,
         beside = FALSE,
-        col = c("green","grey","red"),
+        col =c("green4","grey","red3"),
         main = "Parteiempflungen zum Thema Lebensqualität",
         xlab = "Partei",
         ylab = "Anzahl der Nennungen")
 legend("topleft", legend = rownames(haeufigkeiten205_matrix),
-       fill = c("green","grey","red"), bty = "n", cex = 0.9)
+       fill = c("green4","grey","red3"), bty = "n", cex = 0.9)
 
 
 #------------------------------
