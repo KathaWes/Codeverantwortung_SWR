@@ -737,5 +737,64 @@ legend("topleft", legend = rownames(haeufigkeiten205_matrix),
        fill = c("green4","grey","red3"), bty = "n", cex = 0.9)
 
 
+#############Probieren Barplots der verschiedenen Themen zu stapeln:
+haeufigkeiten_kombiniert <- rbind(
+  # 1) ALLE POSITIVEN (unten)
+  Wirtschaft_positiv      = haeufigkeiten202_matrix["positiv", ],
+  Bildung_positiv         = haeufigkeiten203_matrix["positiv", ],
+  Zuwanderung_positiv     = haeufigkeiten204_matrix["positiv", ],
+  Lebensqualitaet_positiv = haeufigkeiten205_matrix["positiv", ],
+   # 2) ALLE NEGATIVEN (mitte)
+  Wirtschaft_negativ      = haeufigkeiten202_matrix["negativ", ],
+  Bildung_negativ         = haeufigkeiten203_matrix["negativ", ],
+  Zuwanderung_negativ     = haeufigkeiten204_matrix["negativ", ],
+  Lebensqualitaet_negativ = haeufigkeiten205_matrix["negativ", ],
+  # 3) ALLE NEUTRALEN (oben)
+  Wirtschaft_neutral      = haeufigkeiten202_matrix["neutral", ],
+  Bildung_neutral         = haeufigkeiten203_matrix["neutral", ],
+  Zuwanderung_neutral     = haeufigkeiten204_matrix["neutral", ],
+  Lebensqualitaet_neutral = haeufigkeiten205_matrix["neutral", ]
+)
+
+farben_stapel <- c(
+  # positiv
+  "#006400",  # Wirtschaft
+  "#008000",  # Bildung
+  "#00A000",  # Zuwanderung
+  "#00C000",  # Lebensqualität
+  
+  # negativ
+  "#8B0000",  # Wirtschaft
+  "#B00000",  # Bildung
+  "#D00000",  # Zuwanderung
+  "#FF0000",  # Lebensqualität
+  
+  # neutral
+  "#4F6D7A",  # Wirtschaft (blaugrau)
+  "#6C8EA4",  # Bildung
+  "#8FAFBF",  # Zuwanderung
+  "#B0C4DE"   # Lebensqualität
+)
+
+# Ränder setzen: unten, links, oben, rechts
+par(mar = c(5, 13, 4, 3))  # rechter Rand stark vergrößert
+#Barplot erstellen 
+barplot(
+  haeufigkeiten_kombiniert,
+  beside = FALSE,
+  col = farben_stapel,
+  main = "Parteinennungen nach Haltung und Thema",
+  xlab = "Partei"
+)
+#Legende für Barplot
+legend(
+  "bottomleft",
+  inset = c(-0.3, 0),
+  legend = rownames(haeufigkeiten_kombiniert),
+  fill = farben_stapel,
+  bty = "n",
+  cex = 0.78,
+  xpd = TRUE
+)
 #------------------------------
 dev.off() #Graphik-Fenster schließen (wichtig für PDF)
