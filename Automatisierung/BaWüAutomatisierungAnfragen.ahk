@@ -14,7 +14,7 @@ TrayTip "KI Automation", "Skript läuft…  ESC = Abbruch", 3
 ; =====================================================
 ; FRAGEN LADEN
 ; =====================================================
-FragenText := FileRead("RLPFragenPersona.txt", "UTF-8")
+FragenText := FileRead("BaWüFragenPersona.txt", "UTF-8")
 FragenArray := StrSplit(FragenText, "`n")
 
 for index, Frage in FragenArray {
