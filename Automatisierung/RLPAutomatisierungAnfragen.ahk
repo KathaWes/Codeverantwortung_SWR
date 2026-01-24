@@ -61,12 +61,12 @@ AskKI(kiName, frage) {
 
     A_Clipboard := frage
 
-    ; === FOKUS INS EINGABEFELD SETZEN ===
-    if (kiName = "Gemini") {
+    ; === FOKUS TAB SETZEN ===
+
         CoordMode "Mouse","Window"
-        Click 600,650      ; Klick ins Texteingabefeld bei Gemini (Koordinaten prüfen!)
+        Click 600,650      ;
         Sleep 300
-    }
+
 
     Send "^+o"        ; Neuer Chat 
     Sleep 5000
@@ -89,16 +89,10 @@ AskKI(kiName, frage) {
 
 CreateDoc(frage, antwort, ki) {
     ActivateBrowser()
-    Send "^3"           ; Tab 3 = Google Docs
-    
-    Sleep 500
-    
-  
     Send "^t" ; neuer Tab
     Sleep 200
     Send "https://docs.google.com/document/create?usp=drive_web&folder=1jNfJOmu9GCn1sbBFirbShYz6jJWoCcjW{Enter}" ; Ordner im OneDrive
-   ; Send "https://docs.new{Enter}"   ; Neues Dokument öffnen im selben Tab
-    Sleep 5000
+    Sleep 8000
             
     timestamp := FormatTime("", "dd.MM.yyyy HH:mm:ss")
     A_Clipboard :=
