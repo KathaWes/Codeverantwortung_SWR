@@ -9,6 +9,8 @@ library(dplyr)
 library(tidyr)
 library(stringr)
 library(ggplot2)
+library(tidytext)
+
 
 #Einlesen der ersten Tabelle
 daten <- read_csv("Fragenauswertung - Parteiempfehlungen66.csv", skip =2) 
@@ -175,8 +177,13 @@ ggplot(ausfuerlichkeit_long, aes(x = Partei, y = Ausf, fill = KI)) +
        x = "Partei", y = "Wortanzahl der Antwort") +
   theme_minimal()
 
+# Nennung weitere Parteien
+anmerkungen_words <- daten %>%
+  filter(!is.na(Anmerkungen)) %>%
+  unnest_tokens(word, Anmerkungen) %>%
+  count(word, sort=TRUE)
 
-
+head(anmerkungen_words)
 ########### Häufigkeiten der Konstruktionen für verscheidene Partein###########
 # Häufigkeit Konstruktionen CDU
 daten %>%
