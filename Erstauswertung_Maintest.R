@@ -2,6 +2,7 @@ library(readr)
 library(dplyr)
 library(tidyr)
 library(stringr)
+library(ggplot2)
 
 #Einlesen der ersten Tabelle
 daten <- read_csv("Fragenauswertung - Parteiempfehlungen_60%.csv", skip =2)
@@ -205,4 +206,33 @@ daten %>%
   mutate(K_Weitere = str_trim(K_Weitere)) %>%
   count(K_Weitere, sort = TRUE)
 ############################################################
-  
+#Score Nennungen 
+
+
+# Daten in langes Format umwandeln
+points_vec <- 8:1
+df_long <- daten %>%
+  select(N1:N8) %>%   # nur N1 bis N8
+  mutate(id = row_number()) %>%
+  pivot_longer(cols = N1:N8, names_to = "Position", values_to = "Partei") %>%
+  mutate(Punkte = points_vec[as.numeric(sub("N", "", Position))])
+# Liste der unerwünschten Antworten
+ungültige_parteien <- c(
+  "es wird keine weitere Partei genannt",
+  "50 - ChatBot verweigert die Aussage",
+  "99 - Antwort uneindeutig"
+)
+# Punkte pro Partei summieren, aber unerwünschte Antworten entfernen
+partei_scores <- df_long %>%
+  filter(!Partei %in% ungültige_parteien) %>%   # filtert die "Fake-Parteien" raus
+  group_by(Partei) %>%
+  summarise(Score = sum(Punkte)) %>%
+  arrange(desc(Score))
+
+
+ggplot(partei_scores, aes(x = reorder(Partei, Score), y = Score)) +
+  geom_col(fill = "steelblue") +       # Balken
+  coord_flip() +                       # horizontale Balken
+  labs(title = "Partei-Scores", x = "Partei", y = "Score") +
+  theme_minimal()
+
