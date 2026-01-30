@@ -15,7 +15,27 @@ daten <- daten %>%
     )
   )
 
-#Verkürzung der Variablennamen 
+##############Verkürzung der Variablennamen 
+# Erwähnungen
+names(daten)[names(daten) == "Erwähnung 1.1 CDU"] <- "Erw_CDU"
+names(daten)[names(daten) == "Erwähnung 1.2 SPD"] <- "Erw_SPD"
+names(daten)[names(daten) == "Erwähnung 1.3 AFD"] <- "Erw_AFD"
+names(daten)[names(daten) == "Erwähnung 1.4 Grüne"] <- "Erw_Gruene"
+names(daten)[names(daten) == "Erwähnung 1.5 Linke"] <- "Erw_Linke"
+names(daten)[names(daten) == "Erwähnung 1.6 FDP"] <- "Erw_FDP"
+names(daten)[names(daten) == "Erwähnung 1.7 Freie Wähler"] <- "Erw_FW"
+names(daten)[names(daten) == "Erwähnung 1.8 weitere"] <- "Erw_Weitere"
+# Empfehlungen
+names(daten)[names(daten) == "Empfehlung 2.1 CDU"] <- "Empf_CDU"
+names(daten)[names(daten) == "Empfehlung 2.2 SPD"] <- "Empf_SPD"
+names(daten)[names(daten) == "Empfehlung 2.3 AFD"] <- "Empf_AFD"
+names(daten)[names(daten) == "Empfehlung 2.4 Grüne"] <- "Empf_Gruene"
+names(daten)[names(daten) == "Empfehlung 2.5 Linke"] <- "Empf_Linke"
+names(daten)[names(daten) == "Empfehlung 2.6 FDP"] <- "Empf_FDP"
+names(daten)[names(daten) == "Empfehlung 2.7 Freie Wähler"] <- "Empf_FW"
+names(daten)[names(daten) == "Empfehlung 2.8 weitere"] <- "Empf_Weitere"
+names(daten)[names(daten) == "Empfehlung 2.9 Anzahl"] <- "Empf_Anzahl"
+# Konstruktionen
 names(daten)[names(daten) == "Konstruktion 3.1 CDU"] <- "K_CDU"
 names(daten)[names(daten) == "Konstruktion 3.2 SPD"] <- "K_SPD"
 names(daten)[names(daten) == "Konstruktion 3.3. AFD"] <- "K_AFD"
@@ -24,6 +44,19 @@ names(daten)[names(daten) == "Konstruktion 3.5 Linke"] <- "K_Linke"
 names(daten)[names(daten) == "Konstruktion 3.6 FDP"] <- "K_FDP"
 names(daten)[names(daten) == "Konstruktion 3.7 Freie Wähler"] <- "K_FW"
 names(daten)[names(daten) == "Konstruktion 3.8 weitere"] <- "K_Weitere"
+#Nennungen
+names(daten)[names(daten) == "Nennung 1"] <- "N1"
+names(daten)[names(daten) == "Nennung 2"] <- "N2"
+names(daten)[names(daten) == "Nennung 3"] <- "N3"
+names(daten)[names(daten) == "Nennung 4"] <- "N4"
+names(daten)[names(daten) == "Nennung 5"] <- "N5"
+names(daten)[names(daten) == "Nennung 6"] <- "N6"
+names(daten)[names(daten) == "Nennung 7"] <- "N7"
+names(daten)[names(daten) == "Nennung 8"] <- "N8"
+#Kontext
+names(daten)[names(daten) == "Kontext 4.1"] <- "Kontext_1"
+names(daten)[names(daten) == "Kontext 4.2"] <- "Kontext_2"
+#Ausführlichkeit
 names(daten)[names(daten) == "Ausführlichkeit  5.0 Gesamt"] <- "Ausf"
 names(daten)[names(daten) == "Ausführlichkeit  5.1 CDU"] <- "Ausf_CDU"
 names(daten)[names(daten) == "Ausführlichkeit  5.2 SPD"] <- "Ausf_SPD"
@@ -33,6 +66,7 @@ names(daten)[names(daten) == "Ausführlichkeit  5.5 Linke"] <- "Ausf_Linke"
 names(daten)[names(daten) == "Ausführlichkeit  5.6 FDP"] <- "Ausf_FDP"
 names(daten)[names(daten) == "Ausführlichkeit  5.7 Freie Wähler"] <- "Ausf_FW"
 names(daten)[names(daten) == "Ausführlichkeit  5.8 Weitere"] <- "Ausf_Weiter"
+#Weiteres
 names(daten)[names(daten) == "KI-Modell"] <- "KI"
 
 #Entfernen von leeren Zeilen wo weder Land noch KI angegeben sind
@@ -68,7 +102,7 @@ aggregate(Ausf ~ KI + Land,
 
 
 #wie oft jede Partei erwähnt wird:
-erwaehnung_spalten <- grep("^Erwähnung 1\\.", names(daten), value = TRUE)
+erwaehnung_spalten <- grep("^Erw_", names(daten), value = TRUE)
 
 haeufigkeiten <- sapply(erwaehnung_spalten, function(spalte) {
   sum(grepl("^1\\s*-", daten[[spalte]]), na.rm = TRUE)
@@ -111,9 +145,10 @@ boxplot(
 )
 
 #Häufigkeitstabellen
-table(daten$`Empfehlung 2.1 CDU`)
+table(daten$Empf_CDU)
 table(daten$K_CDU)
 
+########### Häufigkeiten der Konstruktionen für verscheidene Partein###########
 # Häufigkeit Konstruktionen CDU
 daten %>%
   select(K_CDU) %>%
@@ -169,4 +204,5 @@ daten %>%
   separate_rows(K_Weitere, sep = ",") %>%
   mutate(K_Weitere = str_trim(K_Weitere)) %>%
   count(K_Weitere, sort = TRUE)
+############################################################
   
