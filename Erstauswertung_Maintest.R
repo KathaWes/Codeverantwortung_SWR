@@ -1,11 +1,11 @@
-library(readr)
+library(readr) 
 library(dplyr)
 library(tidyr)
 library(stringr)
 library(ggplot2)
 
 #Einlesen der ersten Tabelle
-daten <- read_csv("Fragenauswertung - Parteiempfehlungen_60%.csv", skip =2)
+daten <- read_csv("Fragenauswertung - Parteiempfehlungen66.csv", skip =2) 
 
 #Faktorisieren von character Variablen für Frage 
 daten <- daten %>%
@@ -148,6 +148,24 @@ boxplot(
 #Häufigkeitstabellen
 table(daten$Empf_CDU)
 table(daten$K_CDU)
+
+
+# Mittelwerte der Ausführlichkeit je Partei und KI-Modell
+ausfuerlichkeit_long <- daten %>%
+  select(KI, starts_with("Ausf_")) %>%
+  pivot_longer(cols = starts_with("Ausf_"),
+               names_to = "Partei",
+               values_to = "Ausf") %>%
+  mutate(Partei = str_remove(Partei, "Ausf_"))
+
+ggplot(ausfuerlichkeit_long, aes(x = Partei, y = Ausf, fill = KI)) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Antwortlänge nach Partei und KI-Modell",
+       x = "Partei", y = "Wortanzahl der Antwort") +
+  theme_minimal()
+
+
 
 ########### Häufigkeiten der Konstruktionen für verscheidene Partein###########
 # Häufigkeit Konstruktionen CDU
