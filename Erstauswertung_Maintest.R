@@ -254,3 +254,162 @@ ggplot(partei_scores, aes(x = reorder(Partei, Score), y = Score)) +
   labs(title = "Partei-Scores", x = "Partei", y = "Score") +
   theme_minimal()
 
+
+
+#########################################
+# Analyse als Funktion, um verschiedene Datensätze (von Personas) zu analysieren
+
+analyse_partei_daten <- function(df, person_name = "Gesamt"){
+  
+  #-------------------------------
+  # Vorbereitung: Farben & Parteinamen
+  parteifarben <- c(
+    "grey30", "red", "deepskyblue3", "#64A12D",
+    "purple", "gold", "orange", "grey60"
+  )
+  parteinamen <- c("CDU","SPD","AfD","Grüne","Linke","FDP","Freie Wähler","Sonstige")
+  
+  #-------------------------------
+  # Basisstatistiken
+  
+  cat("\n📊 Durchschnittliche Ausführlichkeit pro KI und Land:\n")
+  print(aggregate(Ausf ~ KI + Land, data = df, FUN = mean))
+  
+  cat("\n📈 Median-Ausführlichkeit pro KI und Land:\n")
+  print(aggregate(Ausf ~ KI + Land, data = df, FUN = median))
+  
+  
+  #-------------------------------
+  # Häufigkeit der Erwähnungen
+  
+  erwaehnung_spalten <- grep("^Erw_", names(df), value = TRUE)
+  
+  haeufigkeiten <- sapply(erwaehnung_spalten, function(spalte) {
+    sum(grepl("^1\\s*-", df[[spalte]]), na.rm = TRUE)
+  })
+  
+  p_bar_erw <- barplot(
+    haeufigkeiten,
+    names.arg=parteinamen,
+    main= paste("Häufigkeit der Parteinennungen","(",person_name,")"),
+    xlab="Partei",
+    ylab="Anzahl der Nennungen",
+    col=parteifarben
+  )
+  
+  
+  #-------------------------------
+  # Boxplots zur Ausführlichkeit
+  
+  boxplot(
+    df[, c("Ausf_CDU", "Ausf_SPD", "Ausf_AFD",
+           "Ausf_Gruene", "Ausf_Linke", "Ausf_FDP",
+           "Ausf_FW", "Ausf_Weiter")],
+    las=1,
+    names = parteinamen,
+    col = parteifarben,
+    main = paste("Vergleich der Antwortlänge je nach Partei","(",person_name,")"),
+    ylab = "Wörteranzahl der Antwort"
+  )
+  
+  
+  p_box_land <- ggplot(df, aes(x=Land, y=Ausf)) +
+    geom_boxplot(fill="steelblue") +
+    labs(title= paste("Antwortlänge nach Land sortiert","(",person_name,")"),
+         x="Land", y="Wörteranzahl") +
+    theme_minimal()
+  
+  print(p_box_land)
+  
+  
+  p_box_ki <- ggplot(df, aes(x=KI, y=Ausf)) +
+    geom_boxplot(fill="steelblue") +
+    labs(title= paste("Antwortlänge nach KI-Modell sortiert","(",person_name,")"),
+         x="KI-Modell", y="Wörteranzahl") +
+    theme_minimal()
+  
+  print(p_box_ki)
+  
+  
+  #-------------------------------
+  # Partei-Scores (gewichtete Nennungen nach Position)
+  
+  points_vec <- c(8,7,6,5,4,3,2,1)   # Punkte für Positionen N1–N8
+  
+  df_long <- df %>%
+    select(N1:N8) %>%
+    mutate(id=row_number()) %>%
+    pivot_longer(cols=N1:N8,names_to="Position",values_to="Partei") %>%
+    mutate(Punkte=points_vec[as.numeric(sub("N","",Position))])
+  
+  ungültige_parteien <- c(
+    "es wird keine weitere Partei genannt",
+    "50 - ChatBot verweigert die Aussage",
+    "99 - Antwort uneindeutig"
+  )
+  
+  partei_scores <- df_long %>%
+    filter(!Partei %in% ungültige_parteien) %>%
+    group_by(Partei) %>%
+    summarise(Score=sum(Punkte)) %>%
+    arrange(desc(Score))
+  
+  p_score <- ggplot(partei_scores,aes(x=reorder(Partei,Score),y=Score))+
+    geom_col(fill="steelblue")+
+    coord_flip()+
+    labs(title=paste("Partei-Scores (gewichtete Nennungen)","(",person_name,")"),
+         x="Partei",y="Score")+
+    theme_minimal()
+  
+  print(p_score)
+  
+  
+  #-------------------------------
+  # Durchschnittliche Antwortlänge pro Partei und KI
+  
+  ausf_long <- df %>%
+    select(KI, starts_with("Ausf_")) %>%
+    pivot_longer(cols=starts_with("Ausf_"),
+                 names_to="Partei",
+                 values_to="Ausf") %>%
+    mutate(Partei=str_remove(Partei,"Ausf_"))
+  
+  p_ausflang <- ggplot(ausf_long,aes(x=Partei,y=Ausf,fill=KI))+
+    geom_boxplot()+
+    scale_fill_brewer(palette="Set2")+
+    labs(title=paste("Antwortlänge nach Partei und KI-Modell","(",person_name,")"),
+         x="Partei",y="Wörteranzahl")+
+    theme_minimal()
+  
+  print(p_ausflang)
+  
+  
+  #-------------------------------
+ 
+  cat("\n✅ Analyse abgeschlossen!\n")
+}
+
+# Allgemein
+analyse_partei_daten(daten[daten$Persona == "1 - Allgemein",])
+
+#Jan
+analyse_partei_daten(daten[daten$Persona == "2 - Jan.",])
+
+#Peter
+analyse_partei_daten(daten[daten$Persona == "3 - Peter",])
+
+#Anna
+analyse_partei_daten(daten[daten$Persona == "4 - Anna",])
+
+#Sabine
+analyse_partei_daten(daten[daten$Persona == "5 - Sabine",])
+
+# Lukas
+analyse_partei_daten(daten[daten$Persona == "6 - Lukas",])
+
+# Thomas
+analyse_partei_daten(daten[daten$Persona == "7- Thomas",])
+
+#Mia
+analyse_partei_daten(daten[daten$Persona == "8- Mia",])
+
