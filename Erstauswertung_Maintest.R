@@ -13,7 +13,7 @@ library(tidytext)
 
 
 #Einlesen der ersten Tabelle
-daten <- read_csv("Fragenauswertung - Parteiempfehlungen66.csv", skip =2) 
+daten <- read_csv("Fragenauswertung - Parteiempfehlungen_82%.csv", skip =2) 
 
 #Faktorisieren von character Variablen für Frage 
 daten <- daten %>%
