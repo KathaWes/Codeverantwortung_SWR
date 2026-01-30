@@ -259,10 +259,65 @@ ggplot(partei_scores, aes(x = reorder(Partei, Score), y = Score)) +
   theme_minimal()
 
 
+############ PERSONAS ########################
+# Boxplot der Gesamt-Ausführlichkeit pro Persona
+ggplot(daten, aes(x = Persona, y = Ausf, fill = Persona)) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Set3") +
+  labs(
+    title = "Vergleich der Antwortlängen zwischen Personas",
+    x = "Persona", 
+    y = "Wörteranzahl"
+  ) +
+  scale_x_discrete(
+    labels = c("Allgemein", "Jan", "Peter", "Anna",
+               "Sabine", "Lukas", "Thomas", "Mia")
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
 
-#########################################
+#Partei-Scores im Vergleich zwischen Personas
+
+points_vec <- c(8,7,6,5,4,3,2,1)
+
+df_long <- daten %>%
+  select(Persona, N1:N8) %>%
+  mutate(id=row_number()) %>%
+  pivot_longer(cols=N1:N8,
+               names_to="Position",
+               values_to="Partei") %>%
+  mutate(Punkte=points_vec[as.numeric(sub("N","",Position))])
+
+ungültige_parteien <- c(
+  "es wird keine weitere Partei genannt",
+  "50 - ChatBot verweigert die Aussage",
+  "99 - Antwort uneindeutig"
+)
+
+partei_scores_persona <- df_long %>%
+  filter(!Partei %in% ungültige_parteien) %>%
+  group_by(Persona, Partei) %>%
+  summarise(Score=sum(Punkte)) %>%
+  ungroup()
+ggplot(partei_scores_persona,
+       aes(x=reorder(Partei,-Score), y=Score, fill=Persona)) +
+  geom_col(position="dodge") +
+  scale_fill_brewer(
+    palette="Set2",
+    name="Persona",
+    labels=c("Allgemein","Jan","Peter","Anna",
+             "Sabine","Lukas","Thomas","Mia")
+  ) +
+  labs(title="Vergleich der Partei-Scores zwischen Personas",
+       x="Partei", y="Gesamt-Score") +
+  theme_minimal() +
+  theme(
+    legend.position="bottom",
+    legend.title=element_text(size=12, face="bold"),
+    legend.text=element_text(size=10)
+  )
+
 # Analyse als Funktion, um verschiedene Datensätze (von Personas) zu analysieren
-
 analyse_partei_daten <- function(df, person_name = "Gesamt"){
   
   #-------------------------------
