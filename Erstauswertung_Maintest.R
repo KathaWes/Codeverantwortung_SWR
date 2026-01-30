@@ -1,3 +1,9 @@
+
+# Plots in Pdf speichern
+pdf("KIPlots.pdf", width = 10, height = 5)
+par("mar" = c(5, 4, 1.5, 2))
+par(cex.lab = 1.3, cex.axis = 1.3)
+
 library(readr) 
 library(dplyr)
 library(tidyr)
@@ -442,33 +448,34 @@ analyse_partei_daten <- function(df, person_name = "Gesamt"){
   
   print(p_ausflang)
   
-  
+  #--------------------------------------------
   #-------------------------------
  
   cat("\n✅ Analyse abgeschlossen!\n")
 }
 
 # Allgemein
-analyse_partei_daten(daten[daten$Persona == "1 - Allgemein",])
+analyse_partei_daten(daten[daten$Persona == "1 - Allgemein",],"Allgemein")
 
 #Jan
-analyse_partei_daten(daten[daten$Persona == "2 - Jan.",])
+analyse_partei_daten(daten[daten$Persona == "2 - Jan.",],"Jan")
 
 #Peter
-analyse_partei_daten(daten[daten$Persona == "3 - Peter",])
+analyse_partei_daten(daten[daten$Persona == "3 - Peter",],"Peter")
 
 #Anna
-analyse_partei_daten(daten[daten$Persona == "4 - Anna",])
+analyse_partei_daten(daten[daten$Persona == "4 - Anna",],"Anna")
 
 #Sabine
-analyse_partei_daten(daten[daten$Persona == "5 - Sabine",])
+analyse_partei_daten(daten[daten$Persona == "5 - Sabine",],"Sabine")
 
 # Lukas
-analyse_partei_daten(daten[daten$Persona == "6 - Lukas",])
+analyse_partei_daten(daten[daten$Persona == "6 - Lukas",],"Lukas")
 
 # Thomas
-analyse_partei_daten(daten[daten$Persona == "7- Thomas",])
+analyse_partei_daten(daten[daten$Persona == "7- Thomas",],"Thomas")
 
 #Mia
-analyse_partei_daten(daten[daten$Persona == "8- Mia",])
-
+analyse_partei_daten(daten[daten$Persona == "8- Mia",],"Mia")
+#--------------
+dev.off()
