@@ -149,6 +149,10 @@ boxplot(
 table(daten$Empf_CDU)
 table(daten$K_CDU)
 
+# Häufigkeit Persona bezogene Antwort
+barplot(table(daten$`nur Thema der Persona`), col="steelblue", 
+        names.arg = c('Nein', 'Ja'),
+        main="Antwort bezieht sich ausschlielich auf Persona")
 
 # Mittelwerte der Ausführlichkeit je Partei und KI-Modell
 ausfuerlichkeit_long <- daten %>%
