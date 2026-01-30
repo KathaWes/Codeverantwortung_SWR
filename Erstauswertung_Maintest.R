@@ -25,6 +25,14 @@ names(daten)[names(daten) == "Ausführlichkeit  5.7 Freie Wähler"] <- "Ausf_FW"
 names(daten)[names(daten) == "Ausführlichkeit  5.8 Weitere"] <- "Ausf_Weiter"
 names(daten)[names(daten) == "KI-Modell"] <- "KI"
 
+#Entfernen von leeren Zeilen wo weder Land noch KI angegeben sind
+daten <- daten %>%
+  filter(!(is.na(Land) & is.na(KI)))
+
+######### SPÄTER ENTFERNEN HOFFENTLICH ############
+#Entfernen von noch nicht codierten Zeilen
+daten <- daten %>% filter(!(is.na(Codierung)))
+
 #Frabzuordnung Partein
 parteifarben <- c(
   "grey30",        # CDU
