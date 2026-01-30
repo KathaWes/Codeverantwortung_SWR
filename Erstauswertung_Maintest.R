@@ -1,5 +1,7 @@
 library(readr)
 library(dplyr)
+library(tidyr)
+library(stringr)
 
 #Einlesen der ersten Tabelle
 daten <- read_csv("Fragenauswertung - Parteiempfehlungen_60%.csv", skip =2)
@@ -14,6 +16,14 @@ daten <- daten %>%
   )
 
 #Verkürzung der Variablennamen 
+names(daten)[names(daten) == "Konstruktion 3.1 CDU"] <- "K_CDU"
+names(daten)[names(daten) == "Konstruktion 3.2 SPD"] <- "K_SPD"
+names(daten)[names(daten) == "Konstruktion 3.3. AFD"] <- "K_AFD"
+names(daten)[names(daten) == "Konstruktion 3.4 Grüne"] <- "K_Gruene"
+names(daten)[names(daten) == "Konstruktion 3.5 Linke"] <- "K_Linke"
+names(daten)[names(daten) == "Konstruktion 3.6 FDP"] <- "K_FDP"
+names(daten)[names(daten) == "Konstruktion 3.7 Freie Wähler"] <- "K_FW"
+names(daten)[names(daten) == "Konstruktion 3.8 weitere"] <- "K_Weitere"
 names(daten)[names(daten) == "Ausführlichkeit  5.0 Gesamt"] <- "Ausf"
 names(daten)[names(daten) == "Ausführlichkeit  5.1 CDU"] <- "Ausf_CDU"
 names(daten)[names(daten) == "Ausführlichkeit  5.2 SPD"] <- "Ausf_SPD"
@@ -99,3 +109,64 @@ boxplot(
   ylab = "Zeichenanzahl der Antwort inkl. Leerzeichen",
   main= "Antwortlänge nach KI-Modell sortiert "
 )
+
+#Häufigkeitstabellen
+table(daten$`Empfehlung 2.1 CDU`)
+table(daten$K_CDU)
+
+# Häufigkeit Konstruktionen CDU
+daten %>%
+  select(K_CDU) %>%
+  separate_rows(K_CDU, sep = ",") %>%
+  mutate(K_CDU = str_trim(K_CDU)) %>%
+  count(K_CDU, sort = TRUE)
+
+# Häufigkeit Konstruktionen SPD
+daten %>%
+  select(K_SPD) %>%
+  separate_rows(K_SPD, sep = ",") %>%
+  mutate(K_SPD = str_trim(K_SPD)) %>%
+  count(K_SPD, sort = TRUE)
+
+# Häufigkeit Konstruktionen AFD
+daten %>%
+  select(K_AFD) %>%
+  separate_rows(K_AFD, sep = ",") %>%
+  mutate(K_AFD = str_trim(K_AFD)) %>%
+  count(K_AFD, sort = TRUE)
+
+# Häufigkeit Konstruktionen Grüne
+daten %>%
+  select(K_Gruene) %>%
+  separate_rows(K_Gruene, sep = ",") %>%
+  mutate(K_Gruene = str_trim(K_Gruene)) %>%
+  count(K_Gruene, sort = TRUE)
+
+# Häufigkeit Konstruktionen Linke
+daten %>%
+  select(K_Linke) %>%
+  separate_rows(K_Linke, sep = ",") %>%
+  mutate(K_Linke = str_trim(K_Linke)) %>%
+  count(K_Linke, sort = TRUE)
+
+# Häufigkeit Konstruktionen FDP
+daten %>%
+  select(K_FDP) %>%
+  separate_rows(K_FDP, sep = ",") %>%
+  mutate(K_FDP = str_trim(K_FDP)) %>%
+  count(K_FDP, sort = TRUE)
+
+# Häufigkeit Konstruktionen FW
+daten %>%
+  select(K_FW) %>%
+  separate_rows(K_FW, sep = ",") %>%
+  mutate(K_FW = str_trim(K_FW)) %>%
+  count(K_FW, sort = TRUE)
+
+# Häufigkeit Konstruktionen Weitere
+daten %>%
+  select(K_Weitere) %>%
+  separate_rows(K_Weitere, sep = ",") %>%
+  mutate(K_Weitere = str_trim(K_Weitere)) %>%
+  count(K_Weitere, sort = TRUE)
+  
