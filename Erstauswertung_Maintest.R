@@ -2,13 +2,13 @@ library(readr)
 library(dplyr)
 
 #Einlesen der ersten Tabelle
-daten <- read_csv("Fragenauswertung - Parteiempfehlungen.csv")
+daten <- read_csv("Fragenauswertung - Parteiempfehlungen_60%.csv", skip =2)
 
 #Faktorisieren von character Variablen für Frage 
 daten <- daten %>%
   mutate(
     across(
-      where(is.character) & !Link & !Anmerkungen & !Datum,
+      where(is.character) & !Link & !Anmerkungen & !Datum & !Auffälliges ,
       as.factor
     )
   )
@@ -43,12 +43,20 @@ parteinamen <- c("CDU","SPD","AfD","Grüne","Linke","FDP","Freie Wähler","Sonst
 aggregate(Ausf ~ KI + Land,
           data = daten,
           FUN = mean)
+#Mediane Ausführlichkeit pro Modell und Land
+aggregate(Ausf ~ KI + Land,
+          data = daten,
+          FUN = median)
 
 
-# !Muss noch funktionsfähig werden
 #wie oft jede Partei erwähnt wird:
-haeufigkeiten <- sapply(parteinamen,
-                        function(p) sum(grepl("1 ", daten[[paste0("Erwähnung 1.", which(parteinamen==p))]])))
+erwaehnung_spalten <- grep("^Erwähnung 1\\.", names(daten), value = TRUE)
+
+haeufigkeiten <- sapply(erwaehnung_spalten, function(spalte) {
+  sum(grepl("^1\\s*-", daten[[spalte]]), na.rm = TRUE)
+})
+
+
 barplot(haeufigkeiten, names.arg=parteinamen,
         main="Häufigkeit der Parteinennungen",
         xlab="Partei", ylab="Anzahl der Nennungen", col=parteifarben)
