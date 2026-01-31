@@ -206,6 +206,24 @@ daten %>%
   mutate(K_AFD = str_trim(K_AFD)) %>%
   count(K_AFD, sort = TRUE)
 
+#Visualisierung der Häufigkeiten 
+# dabei keine Konstruktion aus Visualisierung rausgenommen
+daten %>%
+  select(K_AFD) %>%
+  separate_rows(K_AFD, sep = ",") %>%
+  mutate(K_AFD = str_trim(K_AFD)) %>%
+  filter(!str_starts(K_AFD, "1 -")) %>%
+  count(K_AFD, sort = TRUE) %>%
+  ggplot(aes(x = reorder(K_AFD, n), y = n)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(
+    title = "Konstruktionstypen – AfD",
+    x = "Konstruktion",
+    y = "Häufigkeit"
+  ) +
+  theme_minimal()
+
 # Häufigkeit Konstruktionen Grüne
 daten %>%
   select(K_Gruene) %>%
@@ -240,6 +258,57 @@ daten %>%
   separate_rows(K_Weitere, sep = ",") %>%
   mutate(K_Weitere = str_trim(K_Weitere)) %>%
   count(K_Weitere, sort = TRUE)
+
+
+long_konstruktionen <- daten %>%
+  select(starts_with("K_")) %>%          # alle Parteien
+  pivot_longer(
+    cols = everything(),
+    names_to = "Partei",
+    values_to = "Konstruktion"
+  ) %>%
+  separate_rows(Konstruktion, sep = ",") %>%
+  mutate(Konstruktion = str_trim(Konstruktion)) %>%
+  
+  # Typ-ID und Label trennen
+  separate(
+    Konstruktion,
+    into = c("Typ_ID", "Typ_Label"),
+    sep = " - ",
+    convert = TRUE,
+    fill = "right"
+  ) %>%
+  
+  # Kategorie 1 entfernen
+  filter(Typ_ID != 1) %>%
+  
+  count(Partei, Typ_ID, Typ_Label)
+
+#Visualisierung aller Konstuktion 
+ggplot(long_konstruktionen,
+       aes(x = reorder(Typ_Label, n), y = n)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  facet_wrap(~ Partei, scales = "free_y") +
+  labs(
+    title = "Wenn-dann-Konstruktionen nach Partei",
+    subtitle = "Kategorie 1 (keine Konstruktion) ausgeschlossen",
+    x = "Konstruktionstyp",
+    y = "Häufigkeit"
+  ) +
+  theme_minimal()
+
+#Konstruktionen nach Typ sortiert und farblich nach Partein unterschieden
+ggplot(long_konstruktionen,
+       aes(x = factor(Typ_ID), y = n, fill = Partei)) +
+  geom_col(position = "dodge") +
+  labs(
+    title = "Vergleich der Konstruktionstypen nach Partei",
+    x = "Konstruktionstyp (ID)",
+    y = "Häufigkeit"
+  ) +
+  theme_minimal()
+
 ############################################################
 #Score Nennungen 
 
