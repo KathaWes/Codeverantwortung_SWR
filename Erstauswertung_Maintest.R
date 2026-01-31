@@ -153,10 +153,6 @@ boxplot(
   main= "Antwortlänge nach KI-Modell sortiert "
 )
 
-#Häufigkeitstabellen
-table(daten$Empf_CDU)
-table(daten$K_CDU)
-
 # Häufigkeit Persona bezogene Antwort
 barplot(table(daten$`nur Thema der Persona`), col="steelblue", 
         names.arg = c('Nein', 'Ja'),
@@ -608,6 +604,59 @@ ggplot(abweichungen_long, aes(x = Partei, y = Abweichung, fill = Partei)) +
   labs(title = "Violinplot Verteilung der Abweichungen pro Partei",
        y = "Abweichung vom Zeilenmittelwert") +
   theme(legend.position = "none")
+
+
+################### Empfehlungs Analyse
+plot(daten$Empf_Anzahl)
+mosaicplot(~ KI + Empf_Anzahl,
+           data=daten,
+           color=TRUE,
+           main="Zusammenhang zwischen Modell und Anzahl der Empfehlungen")
+
+empf_KI <- daten %>%
+  group_by(KI, Empf_Anzahl) %>%
+  summarise(Anzahl = n(),.groups = "drop")
+
+empf_Persona <- daten %>%
+  group_by(Persona, Empf_Anzahl) %>%
+  summarise(Anzahl = n(),.groups = "drop")
+
+empf_Persona_filter <- daten %>%
+  group_by(Persona, Empf_Anzahl) %>%
+  filter(!grepl("3", Empf_Anzahl)) %>%
+  summarise(Anzahl = n(),.groups = "drop")
+
+empf_Persona_CDU <- daten %>%
+  group_by(Persona, Empf_CDU) %>%
+  summarise(Anzahl = n(),.groups = "drop")
+
+empf_Persona_SPD <- daten %>%
+  group_by(Persona, Empf_SPD) %>%
+  summarise(Anzahl = n(),.groups = "drop")
+
+empf_Persona_AFD <- daten %>%
+  group_by(Persona, Empf_AFD) %>%
+  summarise(Anzahl = n(),.groups = "drop")
+
+empf_Persona_Gruene <- daten %>%
+  group_by(Persona, Empf_Gruene) %>%
+  summarise(Anzahl = n(),.groups = "drop")
+
+empf_Persona_Linke <- daten %>%
+  group_by(Persona, Empf_Linke) %>%
+  summarise(Anzahl = n(),.groups = "drop")
+
+empf_Persona_FDP <- daten %>%
+  group_by(Persona, Empf_FDP) %>%
+  summarise(Anzahl = n(),.groups = "drop")
+
+empf_Persona_FW <- daten %>%
+  group_by(Persona, Empf_FW) %>%
+  summarise(Anzahl = n(),.groups = "drop")
+
+empf_Persona_Weitere <- daten %>%
+  group_by(Persona, Empf_Weitere) %>%
+  summarise(Anzahl = n(),.groups = "drop")
 
 
 #--------------
