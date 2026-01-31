@@ -10,7 +10,7 @@ library(tidyr)
 library(stringr)
 library(ggplot2)
 library(tidytext)
-
+library(reshape2)
 
 #Einlesen der ersten Tabelle
 daten <- read_csv("Fragenauswertung - Parteiempfehlungen_88%.csv", skip =2) 
@@ -556,8 +556,58 @@ analyse_partei_daten(daten[daten$Persona == "8- Mia",],"Mia")
 
 
 ##########################################
-#Standardabweichunganalyse
+#Analyse Antwortlänge pro Partei nach Zeilendurchschnitt
 
+# Ausführlichkeits Spalten rausfiltern
+parteien_spalten_ausf <- grep("^Ausf_", names(daten), value = TRUE)
+
+# 1. Mittelwert pro Zeile über die Partei-Spalten berechnen
+daten$Mittelwert_Zeile <- rowMeans(daten[, parteien_spalten_ausf], na.rm = TRUE)
+
+# Abweichung jeder Partei vom Zeilenmittelwert berechnen
+#erzeugen eines neuen Dataframe dafür
+abweichungen <- daten[, parteien_spalten_ausf] - daten$Mittelwert_Zeile
+
+# Optional: Mittelwert der Abweichung pro Partei (sollte nahe 0 sein)
+mean_abweichung <- colMeans(abweichungen, na.rm = TRUE)
+
+# Optional: Standardabweichung pro Partei 
+sd_abweichung <- apply(abweichungen, 2, sd, na.rm = TRUE)
+
+# Ergebnisse anzeigen
+mean_abweichung
+sd_abweichung
+
+# Schritt 1: Zeilen-ID hinzufügen
+abweichungen$Zeile <- 1:nrow(abweichungen)
+
+# Schritt 2: In long-Format bringen
+abweichungen_long <- melt(abweichungen, id.vars = "Zeile", variable.name = "Partei", value.name = "Abweichung")
+
+# Schritt 3: Heatmap erstellen
+ggplot(abweichungen_long, aes(x = Partei, y = Zeile, fill = Abweichung)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", mid = "azure3", high = "red", midpoint = 0) +
+  theme_minimal() +
+  labs(title = "Heatmap Abweichungen der Parteien vom Zeilenmittelwert",
+       x = "Partei", y = "Zeile", fill = "Abweichung")
+
+# Boxplot
+ggplot(abweichungen_long, aes(x = Partei, y = Abweichung, fill = Partei)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title = "Boxplot Verteilung der Abweichungen pro Partei",
+       y = "Abweichung vom Zeilenmittelwert") +
+  theme(legend.position = "none")
+
+#Violinplot
+ggplot(abweichungen_long, aes(x = Partei, y = Abweichung, fill = Partei)) +
+  geom_violin(trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white") +  # Box innerhalb der Violine
+  theme_minimal() +
+  labs(title = "Violinplot Verteilung der Abweichungen pro Partei",
+       y = "Abweichung vom Zeilenmittelwert") +
+  theme(legend.position = "none")
 
 
 #--------------
