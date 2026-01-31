@@ -13,7 +13,7 @@ library(tidytext)
 
 
 #Einlesen der ersten Tabelle
-daten <- read_csv("Fragenauswertung - Parteiempfehlungen_82%.csv", skip =2) 
+daten <- read_csv("Fragenauswertung - Parteiempfehlungen_88%.csv", skip =2) 
 
 #Faktorisieren von character Variablen für Frage 
 daten <- daten %>%
@@ -553,5 +553,12 @@ analyse_partei_daten(daten[daten$Persona == "7- Thomas",],"Thomas")
 
 #Mia
 analyse_partei_daten(daten[daten$Persona == "8- Mia",],"Mia")
+
+
+##########################################
+#Standardabweichunganalyse
+
+
+
 #--------------
 dev.off()
