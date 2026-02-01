@@ -1,6 +1,6 @@
 
 # Plots in Pdf speichern
-pdf("KIPlots.pdf", width = 10, height = 5,title = "Gesamt")
+pdf("KIPlotsRLP.pdf", width = 10, height = 5, title="RLP")
 par("mar" = c(5, 4, 1.5, 2))
 par(cex.lab = 1.3, cex.axis = 1.3)
 
@@ -17,7 +17,7 @@ library(tidytext)    # für reorder_within() / scale_x_reordered()
 
 #Einlesen der ersten Tabelle
 daten <- read_csv("Fragenauswertung - Parteiempfehlungen_88%.csv", skip =2) 
-
+daten <- subset(daten, Land== "Rheinland-Pfalz")
 #Faktorisieren von character Variablen für Frage 
 daten <- daten %>%
   mutate(
@@ -138,8 +138,8 @@ barplot(haeufigkeiten, names.arg=parteinamen,
 #Boxplot Ausführlichkeit der Partein
 boxplot(
   daten[, c("Ausf_CDU", "Ausf_SPD", "Ausf_AFD",
-               "Ausf_Gruene", "Ausf_Linke", "Ausf_FDP",
-               "Ausf_FW", "Ausf_Weiter")],
+            "Ausf_Gruene", "Ausf_Linke", "Ausf_FDP",
+            "Ausf_FW", "Ausf_Weiter")],
   las=1,
   names = parteinamen,
   col = parteifarben,
@@ -147,14 +147,6 @@ boxplot(
   ylab = "Zeichenanzahl der Antwort"
 )
 
-#Boxplot Ausführlichkeit nach Ländern 
-boxplot(
-  Ausf ~ Land,
-  data = daten,
-  xlab = "Land",
-  ylab = "Wortanzahl",
-  main= "Antwortlänge nach Land sortiert "
-)
 
 #Boxplot Ausführlichkeit nach KI-Modell 
 boxplot(
@@ -407,11 +399,11 @@ analyse_partei_daten <- function(df, person_name = "Gesamt"){
   #-------------------------------
   # Basisstatistiken
   
-  cat("\n📊 Durchschnittliche Ausführlichkeit pro KI und Land:\n")
-  print(aggregate(Ausf ~ KI + Land, data = df, FUN = mean))
+  cat("\n📊 Durchschnittliche Ausführlichkeit pro KI\n")
+  print(aggregate(Ausf ~ KI , data = df, FUN = mean))
   
-  cat("\n📈 Median-Ausführlichkeit pro KI und Land:\n")
-  print(aggregate(Ausf ~ KI + Land, data = df, FUN = median))
+  cat("\n📈 Median-Ausführlichkeit pro KI \n")
+  print(aggregate(Ausf ~ KI , data = df, FUN = median))
   
   
   #-------------------------------
@@ -446,16 +438,6 @@ analyse_partei_daten <- function(df, person_name = "Gesamt"){
     main = paste("Vergleich der Antwortlänge je nach Partei","(",person_name,")"),
     ylab = "Wörteranzahl der Antwort"
   )
-  
-  
-  p_box_land <- ggplot(df, aes(x=Land, y=Ausf)) +
-    geom_boxplot(fill="steelblue") +
-    labs(title= paste("Antwortlänge nach Land sortiert","(",person_name,")"),
-         x="Land", y="Wortanzahl") +
-    theme_minimal()
-  
-  print(p_box_land)
-  
   
   p_box_ki <- ggplot(df, aes(x=KI, y=Ausf)) +
     geom_boxplot(fill="steelblue") +
@@ -520,7 +502,7 @@ analyse_partei_daten <- function(df, person_name = "Gesamt"){
   
   #--------------------------------------------
   #-------------------------------
- 
+  
   cat("\n✅ Analyse abgeschlossen!\n")
 }
 
@@ -720,6 +702,15 @@ ggplot(empf_Persona_FDP,
        aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
   geom_col(fill="steelblue", width=.6) +     
   labs(title="FDP-Empfehlungen nach Persona",
+       x="Persona", y="Häufigkeit") +
+  theme_minimal(base_size=13) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+ggplot(empf_Persona_FW,
+       aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
+  geom_col(fill="steelblue", width=.6) +     
+  labs(title="Freihe Wähler-Empfehlungen nach Persona",
        x="Persona", y="Häufigkeit") +
   theme_minimal(base_size=13) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
