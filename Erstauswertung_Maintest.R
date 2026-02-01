@@ -14,7 +14,6 @@ library(reshape2)
 library(forcats)     # für fct_reorder()
 library(scales)
 library(tidytext)    # für reorder_within() / scale_x_reordered()
-
 #Einlesen der ersten Tabelle
 daten <- read_csv("Fragenauswertung - Parteiempfehlungen_88%.csv", skip =2) 
 
@@ -50,12 +49,33 @@ names(daten)[names(daten) == "Empfehlung 2.7 Freie Wähler"] <- "Empf_FW"
 names(daten)[names(daten) == "Empfehlung 2.8 weitere"] <- "Empf_Weitere"
 names(daten)[names(daten) == "Empfehlung 2.9 Anzahl"] <- "Empf_Anzahl"
 # Ausprägungen Empfehlung
-levels(daten$Empf_Anzahl)= c("mehrere Parteien ",                 
-                             "eine Partei",                  
-                             "keine Partei",                       
+levels(daten$Empf_Anzahl)= c("mehrere Parteien ",
+                             "eine Partei",
+                             "keine Partei",
                              "wenn-dann-Konstrukt",
-                             "verweigert  Aussage",                      
+                             "verweigert  Aussage",
                              "Antwort uneindeutig" )
+tmp= c("empfohlen",
+       "keine Einordnung",
+       "nicht genannt",
+       "wenn-dann-Konstrukt",
+       "neutral genannt",
+       "Antwort uneindeutig" )
+levels(daten$Empf_CDU)=tmp
+levels(daten$Empf_SPD)=tmp
+levels(daten$Empf_AFD)=tmp= c("empfohlen",
+                              "explizit nicht empfohlen",
+                              "keine Einordnung",
+                              "nicht genannt",
+                              "wenn-dann-Konstrukt",
+                              "neutral genannt",
+                              "kritisch eingeordnet",
+                              "Antwort uneindeutig" )
+levels(daten$Empf_Gruene)=tmp
+levels(daten$Empf_Linke)=tmp
+levels(daten$Empf_FDP)=tmp
+levels(daten$Empf_FW)=tmp
+
 # Konstruktionen
 names(daten)[names(daten) == "Konstruktion 3.1 CDU"] <- "K_CDU"
 names(daten)[names(daten) == "Konstruktion 3.2 SPD"] <- "K_SPD"
@@ -780,5 +800,54 @@ ggplot(empf_persona_all,
        x="Persona", y="Häufigkeit") +
   theme_minimal(base_size=13) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-#--------------
+
+ggplot(daten, aes(x = Empf_SPD)) +
+  geom_bar(fill = "steelblue", width=.7) +
+  labs(title="SPD – Verteilung der Empfehlungskategorien",
+       x="Kategorie der Empfehlung", y="Anzahl Antworten") +
+  theme_minimal(base_size=14)+
+theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(daten, aes(x = Empf_Linke)) +
+  geom_bar(fill = "steelblue", width=.7) +
+  labs(title="Linke – Verteilung der Empfehlungskategorien",
+       x="Kategorie der Empfehlung", y="Anzahl Antworten") +
+  theme_minimal(base_size=14)+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(daten, aes(x = Empf_AFD)) +
+  geom_bar(fill="steelblue", width=.7) +
+  labs(title="AfD – Verteilung der Empfehlungskategorien",
+       x="Kategorie der Empfehlung", y="Anzahl Antworten") +
+  theme_minimal(base_size=14)+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(daten, aes(x = Empf_Gruene)) +
+  geom_bar(fill="steelblue", width=.7) +
+  labs(title="Grüne– Verteilung der Empfehlungskategorien",
+       x="Kategorie der Empfehlung", y="Anzahl Antworten") +
+  theme_minimal(base_size=14)+
+theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(daten, aes(x = Empf_CDU) )+
+  geom_bar(fill="steelblue", width=.7) +
+  labs(title="CDU– Verteilung der Empfehlungskategorien",
+       x="Kategorie der Empfehlung", y="Anzahl Antworten") +
+  theme_minimal(base_size=14)+
+  theme(axis.text.x= element_text(angle = 45, hjust = 1))
+
+ggplot(daten, aes(x = Empf_FDP)) +
+  geom_bar(fill="steelblue", width=.7) +
+  labs(title="FDP– Verteilung der Empfehlungskategorien",
+       x="Kategorie der Empfehlung", y="Anzahl Antworten") +
+  theme_minimal(base_size=14)+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(daten, aes(x = Empf_FW)) +
+  geom_bar(fill="steelblue", width=.7) +
+  labs(title="Freihe Wähler– Verteilung der Empfehlungskategorien",
+       x="Kategorie der Empfehlung", y="Anzahl Antworten") +
+  theme_minimal(base_size=14)+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+#----------------------------------------------------------------
 dev.off()
