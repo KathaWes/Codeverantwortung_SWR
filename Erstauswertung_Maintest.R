@@ -11,6 +11,9 @@ library(stringr)
 library(ggplot2)
 library(tidytext)
 library(reshape2)
+library(forcats)     # für fct_reorder()
+library(scales)
+library(tidytext)    # für reorder_within() / scale_x_reordered()
 
 #Einlesen der ersten Tabelle
 daten <- read_csv("Fragenauswertung - Parteiempfehlungen_88%.csv", skip =2) 
@@ -47,7 +50,7 @@ names(daten)[names(daten) == "Empfehlung 2.9 Anzahl"] <- "Empf_Anzahl"
 # Konstruktionen
 names(daten)[names(daten) == "Konstruktion 3.1 CDU"] <- "K_CDU"
 names(daten)[names(daten) == "Konstruktion 3.2 SPD"] <- "K_SPD"
-names(daten)[names(daten) == "Konstruktion 3.3. AFD"] <- "K_AFD"
+names(daten)[names(daten) == "Konstruktion 3.3. AFD"] <- "K_AfD"
 names(daten)[names(daten) == "Konstruktion 3.4 Grüne"] <- "K_Gruene"
 names(daten)[names(daten) == "Konstruktion 3.5 Linke"] <- "K_Linke"
 names(daten)[names(daten) == "Konstruktion 3.6 FDP"] <- "K_FDP"
@@ -89,7 +92,7 @@ daten <- daten %>% filter(!(is.na(Codierung)))
 #Frabzuordnung Partein
 parteifarben <- c(
   "grey30",        # CDU
-  "red",          # SPD
+  "#E3000F",          # SPD
   "deepskyblue3", # AfD
   "#64A12D",    # Grüne
   "purple",       # Linke
@@ -140,7 +143,7 @@ boxplot(
   Ausf ~ Land,
   data = daten,
   xlab = "Land",
-  ylab = "Zeichenanzahl der Antwort inkl. Leerzeichen",
+  ylab = "Wortanzahl",
   main= "Antwortlänge nach Land sortiert "
 )
 
@@ -149,14 +152,24 @@ boxplot(
   Ausf ~ KI,
   data = daten,
   xlab = "KI-Modell",
-  ylab = "Zeichenanzahl der Antwort inkl. Leerzeichen",
+  ylab = "Wortanzahl",
   main= "Antwortlänge nach KI-Modell sortiert "
 )
 
 # Häufigkeit Persona bezogene Antwort
-barplot(table(daten$`nur Thema der Persona`), col="steelblue", 
-        names.arg = c('Nein', 'Ja'),
-        main="Antwort bezieht sich ausschlielich auf Persona")
+# Daten vorbereiten
+tab <- table(subset(daten, Persona != "1 - Allgemein", select = `nur Thema der Persona`))
+rel <- round(100 * tab / sum(tab), 1)  # Prozentwerte berechnen
+# Erzeuge Barplot und speichere Balkenpositionen
+bp <- barplot(tab,
+              col = "steelblue",
+              names.arg = c("Nein", "Ja"),
+              main = "Antwort bezieht sich ausschließlich auf Persona",
+              ylim = c(0, max(tab) * 1.3))   # y-Achse größer skalieren
+# Prozentwerte über Balken schreiben
+text(x = bp, y = tab + max(tab)*0.05,
+     labels = paste0(rel, "%"), cex = 1.2)
+
 
 # Mittelwerte der Ausführlichkeit je Partei und KI-Modell
 ausfuerlichkeit_long <- daten %>%
@@ -171,7 +184,7 @@ ggplot(ausfuerlichkeit_long, aes(x = Partei, y = Ausf, fill = KI)) +
   scale_fill_brewer(palette = "Set2") +
   labs(title = "Antwortlänge nach Partei und KI-Modell",
        x = "Partei", y = "Wortanzahl der Antwort") +
-  theme_minimal()
+  theme_minimal(base_size=15)
 
 # Nennung weitere Parteien
 anmerkungen_words <- daten %>%
@@ -181,83 +194,14 @@ anmerkungen_words <- daten %>%
 
 head(anmerkungen_words)
 ########### Häufigkeiten der Konstruktionen für verscheidene Partein###########
-# Häufigkeit Konstruktionen CDU
-daten %>%
-  select(K_CDU) %>%
-  separate_rows(K_CDU, sep = ",") %>%
-  mutate(K_CDU = str_trim(K_CDU)) %>%
-  count(K_CDU, sort = TRUE)
 
-# Häufigkeit Konstruktionen SPD
-daten %>%
-  select(K_SPD) %>%
-  separate_rows(K_SPD, sep = ",") %>%
-  mutate(K_SPD = str_trim(K_SPD)) %>%
-  count(K_SPD, sort = TRUE)
-
-# Häufigkeit Konstruktionen AFD
-daten %>%
-  select(K_AFD) %>%
-  separate_rows(K_AFD, sep = ",") %>%
-  mutate(K_AFD = str_trim(K_AFD)) %>%
-  count(K_AFD, sort = TRUE)
-
-#Visualisierung der Häufigkeiten 
-# dabei keine Konstruktion aus Visualisierung rausgenommen
-daten %>%
-  select(K_AFD) %>%
-  separate_rows(K_AFD, sep = ",") %>%
-  mutate(K_AFD = str_trim(K_AFD)) %>%
-  filter(!str_starts(K_AFD, "1 -")) %>%
-  count(K_AFD, sort = TRUE) %>%
-  ggplot(aes(x = reorder(K_AFD, n), y = n)) +
-  geom_col(fill = "steelblue") +
-  coord_flip() +
-  labs(
-    title = "Konstruktionstypen – AfD",
-    x = "Konstruktion",
-    y = "Häufigkeit"
-  ) +
-  theme_minimal()
-
-# Häufigkeit Konstruktionen Grüne
-daten %>%
-  select(K_Gruene) %>%
-  separate_rows(K_Gruene, sep = ",") %>%
-  mutate(K_Gruene = str_trim(K_Gruene)) %>%
-  count(K_Gruene, sort = TRUE)
-
-# Häufigkeit Konstruktionen Linke
-daten %>%
-  select(K_Linke) %>%
-  separate_rows(K_Linke, sep = ",") %>%
-  mutate(K_Linke = str_trim(K_Linke)) %>%
-  count(K_Linke, sort = TRUE)
-
-# Häufigkeit Konstruktionen FDP
-daten %>%
-  select(K_FDP) %>%
-  separate_rows(K_FDP, sep = ",") %>%
-  mutate(K_FDP = str_trim(K_FDP)) %>%
-  count(K_FDP, sort = TRUE)
-
-# Häufigkeit Konstruktionen FW
-daten %>%
-  select(K_FW) %>%
-  separate_rows(K_FW, sep = ",") %>%
-  mutate(K_FW = str_trim(K_FW)) %>%
-  count(K_FW, sort = TRUE)
-
-# Häufigkeit Konstruktionen Weitere
-daten %>%
-  select(K_Weitere) %>%
-  separate_rows(K_Weitere, sep = ",") %>%
-  mutate(K_Weitere = str_trim(K_Weitere)) %>%
-  count(K_Weitere, sort = TRUE)
-
-
-long_konstruktionen <- daten %>%
-  select(starts_with("K_")) %>%          # alle Parteien
+# ----------------------------------------------------------
+# ️Datenaufbereitung: Alle Konstruktionen ins lange Format bringen
+# ----------------------------------------------------------
+long_konstr <- daten %>%
+  select(starts_with("K_")) %>%
+  # --- Spaltennamen zu klaren Parteinamen umwandeln ---
+  rename_with(~ str_remove_all(., "^K_"), starts_with("K_")) %>%   # entfernt "K_"
   pivot_longer(
     cols = everything(),
     names_to = "Partei",
@@ -266,7 +210,7 @@ long_konstruktionen <- daten %>%
   separate_rows(Konstruktion, sep = ",") %>%
   mutate(Konstruktion = str_trim(Konstruktion)) %>%
   
-  # Typ-ID und Label trennen
+  # Typ-ID und Label trennen ("3 - SPD wird für Sozialpolitik empfohlen")
   separate(
     Konstruktion,
     into = c("Typ_ID", "Typ_Label"),
@@ -275,24 +219,55 @@ long_konstruktionen <- daten %>%
     fill = "right"
   ) %>%
   
-  # Kategorie 1 entfernen
+  # Kategorie 1 ("keine Wenn-dann-Konstruktion") ausschließen
   filter(Typ_ID != 1) %>%
   
-  count(Partei, Typ_ID, Typ_Label)
+  # Labels vereinheitlichen / kürzen
+  mutate(Typ_Label = case_when(
+    str_detect(Typ_Label, "in anderem Kontext") ~ "anderer Kontext",
+    str_detect(Typ_Label, "Migration") ~ "Migrationspolitik",
+    str_detect(Typ_Label, "Sozialpolitik") ~ "Sozialpolitik",
+    str_detect(Typ_Label, "Umweltpolitik") ~ "Umweltpolitik",
+    str_detect(Typ_Label, "Wirtschaftspolitik") ~ "Wirtschaftspolitik",
+    str_detect(Typ_Label, "Verkehrspolitik") ~ "Verkehrspolitik",
+    str_detect(Typ_Label, "(verweigert|ChatBot verweigert)") ~ "verweigert Aussage",
+    TRUE ~ Typ_Label
+  )) %>%
+  
+  count(Partei, Typ_Label, sort=TRUE)
 
-#Visualisierung aller Konstuktion 
-ggplot(long_konstruktionen,
-       aes(x = reorder(Typ_Label, n), y = n)) +
-  geom_col(fill = "steelblue") +
+# ----------------------------------------------------------
+# Plot 1: Absolute Häufigkeiten pro Partei 
+# ----------------------------------------------------------
+
+ggplot(long_konstr,
+       aes(x=reorder_within(Typ_Label,n,Partei), y=n)) +
+  geom_col(fill="steelblue") +
   coord_flip() +
-  facet_wrap(~ Partei, scales = "free_y") +
-  labs(
-    title = "Wenn-dann-Konstruktionen nach Partei",
-    subtitle = "Kategorie 1 (keine Konstruktion) ausgeschlossen",
-    x = "Konstruktionstyp",
-    y = "Häufigkeit"
-  ) +
-  theme_minimal()
+  facet_wrap(~Partei, scales="free_y") +
+  scale_x_reordered() +   
+  labs(title="Wenn-dann-Konstruktionen nach Partei",
+       x="Konstruktionstyp", y="Häufigkeit") +
+  theme_minimal(base_size=13)
+
+
+
+
+
+# ----------------------------------------------------------
+# Gruppierter Vergleich aller Parteien gleichzeitig
+# ----------------------------------------------------------
+
+ggplot(long_konstr,
+       aes(x=fct_reorder(Typ_Label,n),y=n,fill=Partei))+
+  geom_col(position="dodge",width=.7)+
+  coord_flip()+
+  scale_fill_brewer(palette="Set2")+
+  labs(title="Vergleich der Wenn-dann-Konstruktionen zwischen Parteien",
+       subtitle="Kategorie 1 ausgeschlossen – absolute Häufigkeit im direkten Vergleich",
+       x="Konstruktionstyp",y="Häufigkeit",fill="Partei")+
+  theme_minimal(base_size=13)+
+  theme(legend.position="bottom")
 
 #Konstruktionen nach Typ sortiert und farblich nach Partein unterschieden
 ggplot(long_konstruktionen,
