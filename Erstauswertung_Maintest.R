@@ -28,6 +28,8 @@ daten <- daten %>%
   )
 
 ##############Verkürzung der Variablennamen 
+#Personas
+levels(daten$Persona) <- c("Allgemein","Jan","Peter","Anna","Sabine","Lukas","Thomas","Mia")
 # Erwähnungen
 names(daten)[names(daten) == "Erwähnung 1.1 CDU"] <- "Erw_CDU"
 names(daten)[names(daten) == "Erwähnung 1.2 SPD"] <- "Erw_SPD"
@@ -253,32 +255,30 @@ ggplot(konstr_counts,
 # ----------------------------------------------------------
 # Gruppierter Vergleich aller Parteien gleichzeitig
 # ----------------------------------------------------------
-
-ggplot(konstr_counts,
-       aes(x=fct_reorder(Typ_Label,n),y=n,fill=Partei))+
-  geom_col(position="dodge",width=.7)+
-  coord_flip()+
-  scale_fill_brewer(palette="Set2")+
-  labs(title="Vergleich der Wenn-dann-Konstruktionen zwischen Parteien",
-       subtitle="Kategorie 1 ausgeschlossen – absolute Häufigkeit im direkten Vergleich",
-       x="Konstruktionstyp",y="Häufigkeit",fill="Partei")+
-  theme_minimal(base_size=13)+
-  theme(legend.position="bottom")
+# 
+# ggplot(konstr_counts,
+#        aes(x=fct_reorder(Typ_Label,n),y=n,fill=Partei))+
+#   geom_col(position="dodge",width=.7)+
+#   coord_flip()+
+#   scale_fill_brewer(palette="Set2")+
+#   labs(title="Vergleich der Wenn-dann-Konstruktionen zwischen Parteien",
+#        subtitle="Kategorie 1 ausgeschlossen – absolute Häufigkeit im direkten Vergleich",
+#        x="Konstruktionstyp",y="Häufigkeit",fill="Partei")+
+#   theme_minimal(base_size=13)+
+#   theme(legend.position="bottom")
 
 # ----------------------------------------------------------
 # Konstruktionen nach Typ sortiert und farblich nach Partei unterschieden
 # ----------------------------------------------------------
 
-konstr_typ <- long_konstr %>% count(Partei, Typ_ID)
-
+konstr_typ <- long_konstr %>%
+  count(Partei, Typ_ID, Typ_Label)   
 ggplot(konstr_typ,
-       aes(x=factor(Typ_ID), y=n, fill=Partei)) +
-  geom_col(position='dodge') +
+       aes(x = Typ_Label, y = n, fill = Partei)) +
+  geom_col(position='dodge',width=0.8) +
   scale_fill_brewer(palette='Set2') +
   labs(title='Vergleich der Konstruktionstypen nach Partei',
-       x='Konstruktionstyp (ID)',
-       y='Häufigkeit',
-       fill='Partei') +
+       x='Konstruktionstyp', y='Häufigkeit', fill='Partei') +
   theme_minimal(base_size=13) +
   theme(legend.position='bottom')
 
@@ -523,19 +523,19 @@ analyse_partei_daten <- function(df, person_name = "Gesamt"){
 }
 
 # Allgemein
-analyse_partei_daten(daten[daten$Persona == "1 - Allgemein",],"Allgemein")
+analyse_partei_daten(daten[daten$Persona == "Allgemein",],"Allgemein")
 
 #Jan
-analyse_partei_daten(daten[daten$Persona == "2 - Jan.",],"Jan")
+analyse_partei_daten(daten[daten$Persona == "Jan",],"Jan")
 
 #Peter
-analyse_partei_daten(daten[daten$Persona == "3 - Peter",],"Peter")
+analyse_partei_daten(daten[daten$Persona == "Peter",],"Peter")
 
 #Anna
-analyse_partei_daten(daten[daten$Persona == "4 - Anna",],"Anna")
+analyse_partei_daten(daten[daten$Persona == "Anna",],"Anna")
 
 #Sabine
-analyse_partei_daten(daten[daten$Persona == "5 - Sabine",],"Sabine")
+analyse_partei_daten(daten[daten$Persona == "Sabine",],"Sabine")
 
 # Lukas
 analyse_partei_daten(daten[daten$Persona == "6 - Lukas",],"Lukas")
