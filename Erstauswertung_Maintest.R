@@ -370,6 +370,25 @@ ggplot(partei_scores_persona,
     legend.text=element_text(size=10)
   )
 
+ggplot(partei_scores_persona,
+       aes(x = reorder(Persona, -Score), y = Score, fill = Partei)) +
+  geom_col(position = "dodge") +
+  scale_fill_brewer(
+    palette = "Set2",
+    name = "Partei"
+  ) +
+  labs(title = "Vergleich der Scores pro Partei innerhalb der Personas",
+       x = "Persona", y = "Gesamt-Score") +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    legend.title   = element_text(size=12, face="bold"),
+    legend.text    = element_text(size=10),
+    axis.text.x    = element_text(angle=45, hjust=1)
+  )
+
+
+
 # Analyse als Funktion, um verschiedene Datensätze (von Personas) zu analysieren
 analyse_partei_daten <- function(df, person_name = "Gesamt"){
   
