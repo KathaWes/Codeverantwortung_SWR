@@ -194,13 +194,12 @@ anmerkungen_words <- daten %>%
 
 head(anmerkungen_words)
 ########### Häufigkeiten der Konstruktionen für verscheidene Partein###########
+# ----------------------------------------------------------
+# Datenaufbereitung: Alle Konstruktionen ins lange Format bringen
+# ----------------------------------------------------------
 
-# ----------------------------------------------------------
-# ️Datenaufbereitung: Alle Konstruktionen ins lange Format bringen
-# ----------------------------------------------------------
 long_konstr <- daten %>%
   select(starts_with("K_")) %>%
-  # --- Spaltennamen zu klaren Parteinamen umwandeln ---
   rename_with(~ str_remove_all(., "^K_"), starts_with("K_")) %>%   # entfernt "K_"
   pivot_longer(
     cols = everything(),
@@ -232,15 +231,16 @@ long_konstr <- daten %>%
     str_detect(Typ_Label, "Verkehrspolitik") ~ "Verkehrspolitik",
     str_detect(Typ_Label, "(verweigert|ChatBot verweigert)") ~ "verweigert Aussage",
     TRUE ~ Typ_Label
-  )) %>%
-  
-  count(Partei, Typ_Label, sort=TRUE)
+  ))
+
+# Häufigkeiten berechnen (für die ersten beiden Plots)
+konstr_counts <- long_konstr %>% count(Partei, Typ_Label)
 
 # ----------------------------------------------------------
-# Plot 1: Absolute Häufigkeiten pro Partei 
+# Absolute Häufigkeiten pro Partei 
 # ----------------------------------------------------------
 
-ggplot(long_konstr,
+ggplot(konstr_counts,
        aes(x=reorder_within(Typ_Label,n,Partei), y=n)) +
   geom_col(fill="steelblue") +
   coord_flip() +
@@ -250,15 +250,11 @@ ggplot(long_konstr,
        x="Konstruktionstyp", y="Häufigkeit") +
   theme_minimal(base_size=13)
 
-
-
-
-
 # ----------------------------------------------------------
 # Gruppierter Vergleich aller Parteien gleichzeitig
 # ----------------------------------------------------------
 
-ggplot(long_konstr,
+ggplot(konstr_counts,
        aes(x=fct_reorder(Typ_Label,n),y=n,fill=Partei))+
   geom_col(position="dodge",width=.7)+
   coord_flip()+
@@ -269,16 +265,22 @@ ggplot(long_konstr,
   theme_minimal(base_size=13)+
   theme(legend.position="bottom")
 
-#Konstruktionen nach Typ sortiert und farblich nach Partein unterschieden
-ggplot(long_konstruktionen,
-       aes(x = factor(Typ_ID), y = n, fill = Partei)) +
-  geom_col(position = "dodge") +
-  labs(
-    title = "Vergleich der Konstruktionstypen nach Partei",
-    x = "Konstruktionstyp (ID)",
-    y = "Häufigkeit"
-  ) +
-  theme_minimal()
+# ----------------------------------------------------------
+# Konstruktionen nach Typ sortiert und farblich nach Partei unterschieden
+# ----------------------------------------------------------
+
+konstr_typ <- long_konstr %>% count(Partei, Typ_ID)
+
+ggplot(konstr_typ,
+       aes(x=factor(Typ_ID), y=n, fill=Partei)) +
+  geom_col(position='dodge') +
+  scale_fill_brewer(palette='Set2') +
+  labs(title='Vergleich der Konstruktionstypen nach Partei',
+       x='Konstruktionstyp (ID)',
+       y='Häufigkeit',
+       fill='Partei') +
+  theme_minimal(base_size=13) +
+  theme(legend.position='bottom')
 
 ############################################################
 #Score Nennungen 
