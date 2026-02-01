@@ -28,7 +28,7 @@ daten <- daten %>%
   )
 
 ##############Verkürzung der Variablennamen 
-#Personas
+# Ausprägungen Personas
 levels(daten$Persona) <- c("Allgemein","Jan","Peter","Anna","Sabine","Lukas","Thomas","Mia")
 # Erwähnungen
 names(daten)[names(daten) == "Erwähnung 1.1 CDU"] <- "Erw_CDU"
@@ -49,6 +49,13 @@ names(daten)[names(daten) == "Empfehlung 2.6 FDP"] <- "Empf_FDP"
 names(daten)[names(daten) == "Empfehlung 2.7 Freie Wähler"] <- "Empf_FW"
 names(daten)[names(daten) == "Empfehlung 2.8 weitere"] <- "Empf_Weitere"
 names(daten)[names(daten) == "Empfehlung 2.9 Anzahl"] <- "Empf_Anzahl"
+# Ausprägungen Empfehlung
+levels(daten$Empf_Anzahl)= c("mehrere Parteien ",                 
+                             "eine Partei",                  
+                             "keine Partei",                       
+                             "wenn-dann-Konstrukt",
+                             "verweigert  Aussage",                      
+                             "Antwort uneindeutig" )
 # Konstruktionen
 names(daten)[names(daten) == "Konstruktion 3.1 CDU"] <- "K_CDU"
 names(daten)[names(daten) == "Konstruktion 3.2 SPD"] <- "K_SPD"
@@ -196,9 +203,8 @@ anmerkungen_words <- daten %>%
 
 head(anmerkungen_words)
 ########### Häufigkeiten der Konstruktionen für verscheidene Partein###########
-# ----------------------------------------------------------
 # Datenaufbereitung: Alle Konstruktionen ins lange Format bringen
-# ----------------------------------------------------------
+
 
 long_konstr <- daten %>%
   select(starts_with("K_")) %>%
@@ -238,10 +244,8 @@ long_konstr <- daten %>%
 # Häufigkeiten berechnen (für die ersten beiden Plots)
 konstr_counts <- long_konstr %>% count(Partei, Typ_Label)
 
-# ----------------------------------------------------------
-# Absolute Häufigkeiten pro Partei 
-# ----------------------------------------------------------
 
+# Absolute Häufigkeiten pro Partei 
 ggplot(konstr_counts,
        aes(x=reorder_within(Typ_Label,n,Partei), y=n)) +
   geom_col(fill="steelblue") +
@@ -252,9 +256,9 @@ ggplot(konstr_counts,
        x="Konstruktionstyp", y="Häufigkeit") +
   theme_minimal(base_size=13)
 
-# ----------------------------------------------------------
+
 # Gruppierter Vergleich aller Parteien gleichzeitig
-# ----------------------------------------------------------
+
 # 
 # ggplot(konstr_counts,
 #        aes(x=fct_reorder(Typ_Label,n),y=n,fill=Partei))+
@@ -267,10 +271,8 @@ ggplot(konstr_counts,
 #   theme_minimal(base_size=13)+
 #   theme(legend.position="bottom")
 
-# ----------------------------------------------------------
-# Konstruktionen nach Typ sortiert und farblich nach Partei unterschieden
-# ----------------------------------------------------------
 
+# Konstruktionen nach Typ sortiert und farblich nach Partei unterschiede
 konstr_typ <- long_konstr %>%
   count(Partei, Typ_ID, Typ_Label)   
 ggplot(konstr_typ,
@@ -449,7 +451,7 @@ analyse_partei_daten <- function(df, person_name = "Gesamt"){
   p_box_land <- ggplot(df, aes(x=Land, y=Ausf)) +
     geom_boxplot(fill="steelblue") +
     labs(title= paste("Antwortlänge nach Land sortiert","(",person_name,")"),
-         x="Land", y="Wörteranzahl") +
+         x="Land", y="Wortanzahl") +
     theme_minimal()
   
   print(p_box_land)
@@ -458,7 +460,7 @@ analyse_partei_daten <- function(df, person_name = "Gesamt"){
   p_box_ki <- ggplot(df, aes(x=KI, y=Ausf)) +
     geom_boxplot(fill="steelblue") +
     labs(title= paste("Antwortlänge nach KI-Modell sortiert","(",person_name,")"),
-         x="KI-Modell", y="Wörteranzahl") +
+         x="KI-Modell", y="Wortanzahl") +
     theme_minimal()
   
   print(p_box_ki)
@@ -511,7 +513,7 @@ analyse_partei_daten <- function(df, person_name = "Gesamt"){
     geom_boxplot()+
     scale_fill_brewer(palette="Set2")+
     labs(title=paste("Antwortlänge nach Partei und KI-Modell","(",person_name,")"),
-         x="Partei",y="Wörteranzahl")+
+         x="Partei",y="Wortanzahl")+
     theme_minimal()
   
   print(p_ausflang)
@@ -603,11 +605,20 @@ ggplot(abweichungen_long, aes(x = Partei, y = Abweichung, fill = Partei)) +
 
 
 ################### Empfehlungs Analyse
-plot(daten$Empf_Anzahl)
+
+# Erste Übersicht: Verteilung der Anzahl Empfehlungen
+ggplot(daten, aes(x = Empf_Anzahl)) +
+  geom_bar(fill = "steelblue",width=.7) +
+  labs(title = "Verteilung der Anzahl von Empfehlungen",
+       x = "Kategorie der Empfehlung",
+       y = "Anzahl Antworten") +
+  theme_minimal(base_size = 14)
+
 mosaicplot(~ KI + Empf_Anzahl,
            data=daten,
            color=TRUE,
            main="Zusammenhang zwischen Modell und Anzahl der Empfehlungen")
+
 
 empf_KI <- daten %>%
   group_by(KI, Empf_Anzahl) %>%
@@ -654,6 +665,120 @@ empf_Persona_Weitere <- daten %>%
   group_by(Persona, Empf_Weitere) %>%
   summarise(Anzahl = n(),.groups = "drop")
 
+ggplot(empf_Persona,
+       aes(x=Persona,y=Anzahl,fill=Empf_Anzahl))+
+  geom_col(position=position_dodge2(),width=.8)+
+  scale_fill_brewer(palette="Set2", name="Empfehlungskategorie")+
+  labs(title="Verteilung der Empfehlungskategorien nach Persona",
+       x="Persona",y="Häufigkeit")+
+  theme_minimal(base_size=13)+
+  theme(axis.text.x=element_text(angle=45,hjust=1),
+        legend.position='bottom')
 
+# Partei-spezifische Empfehlungen je Persona 
+ggplot(empf_Persona_CDU,
+       aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
+  geom_col(fill="steelblue", width=.6) +      
+  labs(title="CDU-Empfehlungen nach Persona",
+       x="Persona", y="Häufigkeit") +
+  theme_minimal(base_size=13) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(empf_Persona_SPD,
+       aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
+  geom_col(fill="steelblue", width=.6) +     
+  labs(title="SPD-Empfehlungen nach Persona",
+       x="Persona", y="Häufigkeit") +
+  theme_minimal(base_size=13) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(empf_Persona_AFD,
+       aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
+  geom_col(fill="steelblue", width=.6) +   
+  labs(title="Afd-Empfehlungen nach Persona",
+       x="Persona", y="Häufigkeit") +
+  theme_minimal(base_size=13) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(empf_Persona_Gruene,
+       aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
+  geom_col(fill="steelblue", width=.6) +    
+  labs(title="Grüne-Empfehlungen nach Persona",
+       x="Persona", y="Häufigkeit") +
+  theme_minimal(base_size=13) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(empf_Persona_Linke,
+       aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
+  geom_col(fill="steelblue", width=.6) +   
+  labs(title="Linke-Empfehlungen nach Persona",
+       x="Persona", y="Häufigkeit") +
+  theme_minimal(base_size=13) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(empf_Persona_FDP,
+       aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
+  geom_col(fill="steelblue", width=.6) +     
+  labs(title="FDP-Empfehlungen nach Persona",
+       x="Persona", y="Häufigkeit") +
+  theme_minimal(base_size=13) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(empf_Persona_Weitere,
+       aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
+  geom_col(fill="steelblue", width=.6) +     
+  labs(title="Weitere-Empfehlungen nach Persona",
+       x="Persona", y="Häufigkeit") +
+  theme_minimal(base_size=13) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#gemeinsamer Plot
+
+# Liste aller Datensätze
+liste_empf <- list(
+  CDU      = empf_Persona_CDU,
+  SPD      = empf_Persona_SPD,
+  AfD      = empf_Persona_AFD,
+  Gruene   = empf_Persona_Gruene,
+  Linke    = empf_Persona_Linke,
+  FDP      = empf_Persona_FDP,
+  Weitere  = empf_Persona_Weitere
+)
+
+# Zusammenführen mit Parteispalte
+empf_persona_all <- bind_rows(lapply(names(liste_empf), function(p){
+  tmp <- liste_empf[[p]]
+  tmp$Partei <- p
+  return(tmp)
+}))
+
+ggplot(empf_persona_all,
+       aes(x=Persona, y=Anzahl, fill=Partei)) +
+  geom_col(position=position_dodge(width=.8), width=.7) +
+  scale_fill_manual(values=c(
+    "CDU"="grey30",
+    "SPD"="#E3000F",
+    "AfD"="deepskyblue3",
+    "Gruene"="#64A12D",
+    "Linke"="purple",
+    "FDP"="gold",
+    "Weitere"="grey60"
+  ), name="Partei") +
+  labs(title="Vergleich der Empfehlungen nach Persona und Partei",
+       subtitle="Alle Parteien im direkten Vergleich pro Persona",
+       x="Persona", y="Häufigkeit") +
+  theme_minimal(base_size=13) +
+  theme(axis.text.x=element_text(angle=45,hjust=1),
+        legend.position='bottom',
+        legend.title=element_text(face='bold'))
+
+ggplot(empf_persona_all,
+       aes(x=fct_reorder(Persona, Anzahl), y=Anzahl, fill=Partei)) +
+  geom_col(fill="steelblue", width=.7) +     # gleiche Farbe für Übersicht oder eigene Farben per Palette
+  facet_wrap(~Partei, ncol=4) +
+  labs(title="Empfehlungen nach Persona getrennt nach Partei",
+       x="Persona", y="Häufigkeit") +
+  theme_minimal(base_size=13) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 #--------------
 dev.off()
