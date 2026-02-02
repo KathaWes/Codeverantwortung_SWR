@@ -321,6 +321,31 @@ ggplot(partei_scores, aes(x = reorder(Partei, Score), y = Score)) +
   labs(title = "Partei-Scores", x = "Partei", y = "Score") +
   theme_minimal()
 
+#Plot für Parteiscores mit Parteifarben
+ggplot(partei_scores,
+       aes(x = reorder(Partei, Score), y = Score, fill = Partei)) +
+  geom_col() +
+  coord_flip() +
+  scale_fill_manual(
+    values = c(
+      "CDU" = "#000000",
+      "SPD" = "#E3000F",
+      "Grüne" = "#46962B",
+      "FDP" = "#FFED00",
+      "AfD" = "#009EE0",
+      "Linke" = "#BE3075",
+      "Freie Wähler" = "#EF8108",
+      "Weitere" = "#808080"
+    )
+  ) +
+  labs(
+    title = "Partei-Scores Rheinland-Pfalz",
+    x = "Partei",
+    y = "Score",
+    fill = "Partei"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")  # Legende hier überflüssig
 
 ############ PERSONAS ########################
 # Boxplot der Gesamt-Ausführlichkeit pro Persona
