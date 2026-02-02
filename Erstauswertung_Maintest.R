@@ -69,7 +69,7 @@ levels(daten$Empf_SPD)= c("empfohlen",
                           "neutral genannt",
                           "kritisch eingeordnet",
                           "Antwort uneindeutig" )
-levels(daten$Empf_AFD)=tmp= c("empfohlen",
+levels(daten$Empf_AFD)=c("empfohlen",
                               "explizit nicht empfohlen",
                               "keine Einordnung",
                               "nicht genannt",
@@ -893,12 +893,23 @@ aggregate(Ausf_AFD ~ Empf_AFD,
           FUN = function(x) c(n = length(x), Mittelwert = mean(x)))
 
 
-daten %>%
+afd_summary= daten %>%
   group_by(Empf_AFD) %>%
   summarise(
     n = n(),
     Mittelwert_Antwortlaenge = mean(Ausf_AFD, na.rm = TRUE)
   )
+
+afd_summary
+ggplot(afd_summary,
+       aes(x = Empf_AFD, y = Mittelwert_Antwortlaenge)) +
+  geom_col(fill = "deepskyblue3", width=.7) +
+  labs(title = "Antwortlänge zur AfD im Vergleich zur Einordnung",
+       x     = "Einordnung der AfD",
+       y     = "Durchschnittliche Antwortlänge") +
+  theme_minimal(base_size=13) +
+  theme(axis.text.x=element_text(angle=45,hjust=1))
+
 
 #----------------------------------------------------------------
 dev.off()
