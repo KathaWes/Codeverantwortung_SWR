@@ -855,5 +855,21 @@ ggplot(daten, aes(x = Empf_FW)) +
        x="Kategorie der Empfehlung", y="Anzahl Antworten") +
   theme_minimal(base_size=14)+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+
+####Antwortlänge AFD im Vergleich zur Einodnung
+aggregate(Ausf_AFD ~ Empf_AFD,
+          data = daten, 
+          FUN = function(x) c(n = length(x), Mittelwert = mean(x)))
+
+
+daten %>%
+  group_by(Empf_AFD) %>%
+  summarise(
+    n = n(),
+    Mittelwert_Antwortlaenge = mean(Ausf_AFD, na.rm = TRUE)
+  )
+
 #----------------------------------------------------------------
 dev.off()
