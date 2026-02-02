@@ -355,7 +355,7 @@ ggplot(daten, aes(x = Persona, y = Ausf, fill = Persona)) +
   labs(
     title = "Vergleich der Antwortlängen zwischen Personas",
     x = "Persona", 
-    y = "Wörteranzahl"
+    y = "Wortanzahl"
   ) +
   scale_x_discrete(
     labels = c("Allgemein", "Jan", "Peter", "Anna",
@@ -475,7 +475,7 @@ analyse_partei_daten <- function(df, person_name = "Gesamt"){
     names = parteinamen,
     col = parteifarben,
     main = paste("Vergleich der Antwortlänge je nach Partei","(",person_name,")"),
-    ylab = "Wörteranzahl der Antwort"
+    ylab = "Wortanzahl der Antwort"
   )
   
   p_box_ki <- ggplot(df, aes(x=KI, y=Ausf)) +
