@@ -77,7 +77,13 @@ levels(daten$Empf_AFD)=c("empfohlen",
                               "neutral genannt",
                               "kritisch eingeordnet",
                               "Antwort uneindeutig" )
-levels(daten$Empf_Gruene)=tmp
+levels(daten$Empf_Gruene)= c("empfohlen",
+                             "keine Einordnung",
+                             "nicht genannt",
+                             "wenn-dann-Konstrukt",
+                             "neutral genannt",
+                             "kritisch eingeordnet",
+                             "Antwort uneindeutig" )
 levels(daten$Empf_Linke)=tmp
 levels(daten$Empf_FDP)=tmp
 levels(daten$Empf_FW)=tmp
@@ -155,11 +161,14 @@ haeufigkeiten <- sapply(erwaehnung_spalten, function(spalte) {
   sum(grepl("^1\\s*-", daten[[spalte]]), na.rm = TRUE)
 })
 
-
-barplot(haeufigkeiten, names.arg=parteinamen,
-        main="Häufigkeit der Parteinennungen",
-        xlab="Partei", ylab="Anzahl der Nennungen", col=parteifarben)
-
+bp <- barplot(haeufigkeiten,
+              names.arg=parteinamen,
+              ylim=c(0, max(haeufigkeiten)*1.15),    # etwas Platz oben schaffen
+              main="Häufigkeit der Parteinennungen",
+              xlab="Partei", ylab="Anzahl der Nennungen",
+              col=parteifarben)
+# absolute Häufigkeit über Balken
+text(bp, haeufigkeiten, labels=haeufigkeiten, pos=3, cex=1.2)
 
 #Boxplot Ausführlichkeit der Partein
 boxplot(
@@ -478,16 +487,19 @@ analyse_partei_daten <- function(df, person_name = "Gesamt"){
     sum(grepl("^1\\s*-", df[[spalte]]), na.rm = TRUE)
   })
   
+  
   p_bar_erw <- barplot(
     haeufigkeiten,
     names.arg=parteinamen,
+    ylim=c(0, max(haeufigkeiten)*1.15),    # etwas Platz oben schaffen
     main= paste("Häufigkeit der Parteinennungen","(",person_name,")"),
     xlab="Partei",
     ylab="Anzahl der Nennungen",
     col=parteifarben
   )
-  
-  
+
+  # absolute Häufigkeit über Balken
+  text( p_bar_erw, haeufigkeiten, labels=haeufigkeiten, pos=3, cex=1.2)
   #-------------------------------
   # Boxplots zur Ausführlichkeit
   

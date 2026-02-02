@@ -125,10 +125,15 @@ aggregate(Ausf ~ KI + Land,
 #wie oft jede Partei erwähnt wird:
 erwaehnung_spalten <- grep("^Erw_", names(daten), value = TRUE)
 
-haeufigkeiten <- sapply(erwaehnung_spalten, function(spalte) {
-  sum(grepl("^1\\s*-", daten[[spalte]]), na.rm = TRUE)
-})
 
+bp <- barplot(haeufigkeiten,
+              names.arg=parteinamen,
+              ylim=c(0, max(haeufigkeiten)*1.15),    # etwas Platz oben schaffen
+              main="Häufigkeit der Parteinennungen",
+              xlab="Partei", ylab="Anzahl der Nennungen",
+              col=parteifarben)
+# absolute Häufigkeit über Balken
+text(bp, haeufigkeiten, labels=haeufigkeiten, pos=3, cex=1.2)
 
 barplot(haeufigkeiten, names.arg=parteinamen,
         main="Häufigkeit der Parteinennungen",
@@ -451,16 +456,14 @@ analyse_partei_daten <- function(df, person_name = "Gesamt"){
   haeufigkeiten <- sapply(erwaehnung_spalten, function(spalte) {
     sum(grepl("^1\\s*-", df[[spalte]]), na.rm = TRUE)
   })
-  
-  p_bar_erw <- barplot(
-    haeufigkeiten,
-    names.arg=parteinamen,
-    main= paste("Häufigkeit der Parteinennungen","(",person_name,")"),
-    xlab="Partei",
-    ylab="Anzahl der Nennungen",
-    col=parteifarben
-  )
-  
+  p_bar_erw  <- barplot(haeufigkeiten,
+                names.arg=parteinamen,
+                ylim=c(0, max(haeufigkeiten)*1.15),    # etwas Platz oben schaffen
+                main="Häufigkeit der Parteinennungen",
+                xlab="Partei", ylab="Anzahl der Nennungen",
+                col=parteifarben)
+  # absolute Häufigkeit über Balken
+  text( p_bar_erw, haeufigkeiten, labels=haeufigkeiten, pos=3, cex=1.2)
   
   #-------------------------------
   # Boxplots zur Ausführlichkeit
