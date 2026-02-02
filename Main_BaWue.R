@@ -16,7 +16,7 @@ library(scales)
 library(tidytext)    # für reorder_within() / scale_x_reordered()
 
 #Einlesen der ersten Tabelle
-daten <- read_csv("Fragenauswertung - Parteiempfehlungen_88%.csv", skip =2) 
+daten <- read_csv("Fragenauswertung - Parteiempfehlungen99.csv", skip =2) 
 daten <- subset(daten, Land== "Baden-Württenberg")
 #Faktorisieren von character Variablen für Frage 
 daten <- daten %>%
@@ -715,7 +715,6 @@ ggplot(empf_Persona_Weitere,
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 #gemeinsamer Plot
-
 # Liste aller Datensätze
 liste_empf <- list(
   CDU      = empf_Persona_CDU,
@@ -761,6 +760,55 @@ ggplot(empf_persona_all,
   labs(title="Empfehlungen nach Persona getrennt nach Partei",
        x="Persona", y="Häufigkeit") +
   theme_minimal(base_size=13) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(daten, aes(x = Empf_SPD)) +
+  geom_bar(fill = "steelblue", width=.7) +
+  labs(title="SPD – Verteilung der Empfehlungskategorien",
+       x="Kategorie der Empfehlung", y="Anzahl Antworten") +
+  theme_minimal(base_size=14)+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(daten, aes(x = Empf_Linke)) +
+  geom_bar(fill = "steelblue", width=.7) +
+  labs(title="Linke – Verteilung der Empfehlungskategorien",
+       x="Kategorie der Empfehlung", y="Anzahl Antworten") +
+  theme_minimal(base_size=14)+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(daten, aes(x = Empf_AFD)) +
+  geom_bar(fill="steelblue", width=.7) +
+  labs(title="AfD – Verteilung der Empfehlungskategorien",
+       x="Kategorie der Empfehlung", y="Anzahl Antworten") +
+  theme_minimal(base_size=14)+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(daten, aes(x = Empf_Gruene)) +
+  geom_bar(fill="steelblue", width=.7) +
+  labs(title="Grüne– Verteilung der Empfehlungskategorien",
+       x="Kategorie der Empfehlung", y="Anzahl Antworten") +
+  theme_minimal(base_size=14)+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(daten, aes(x = Empf_CDU) )+
+  geom_bar(fill="steelblue", width=.7) +
+  labs(title="CDU– Verteilung der Empfehlungskategorien",
+       x="Kategorie der Empfehlung", y="Anzahl Antworten") +
+  theme_minimal(base_size=14)+
+  theme(axis.text.x= element_text(angle = 45, hjust = 1))
+
+ggplot(daten, aes(x = Empf_FDP)) +
+  geom_bar(fill="steelblue", width=.7) +
+  labs(title="FDP– Verteilung der Empfehlungskategorien",
+       x="Kategorie der Empfehlung", y="Anzahl Antworten") +
+  theme_minimal(base_size=14)+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(daten, aes(x = Empf_FW)) +
+  geom_bar(fill="steelblue", width=.7) +
+  labs(title="Freihe Wähler– Verteilung der Empfehlungskategorien",
+       x="Kategorie der Empfehlung", y="Anzahl Antworten") +
+  theme_minimal(base_size=14)+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 #--------------
 dev.off()
