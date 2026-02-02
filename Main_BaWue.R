@@ -16,7 +16,7 @@ library(scales)
 library(tidytext)    # für reorder_within() / scale_x_reordered()
 
 #Einlesen der ersten Tabelle
-daten <- read_csv("Fragenauswertung - Parteiempfehlungen99.csv", skip =2) 
+daten <- read_csv("Fragenauswertung - Parteiempfehlungen100.csv", skip =2) 
 daten <- subset(daten, Land== "Baden-Württenberg")
 #Faktorisieren von character Variablen für Frage 
 daten <- daten %>%

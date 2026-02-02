@@ -15,7 +15,7 @@ library(forcats)     # für fct_reorder()
 library(scales)
 library(tidytext)    # für reorder_within() / scale_x_reordered()
 #Einlesen der ersten Tabelle
-daten <- read_csv("Fragenauswertung - Parteiempfehlungen99.csv", skip =2) 
+daten <- read_csv("Fragenauswertung - Parteiempfehlungen100.csv", skip =2) 
 
 #Faktorisieren von character Variablen für Frage 
 daten <- daten %>%
