@@ -15,7 +15,7 @@ library(forcats)     # für fct_reorder()
 library(scales)
 library(tidytext)    # für reorder_within() / scale_x_reordered()
 #Einlesen der ersten Tabelle
-daten <- read_csv("Fragenauswertung - Parteiempfehlungen_88%.csv", skip =2) 
+daten <- read_csv("Fragenauswertung - Parteiempfehlungen99.csv", skip =2) 
 
 #Faktorisieren von character Variablen für Frage 
 daten <- daten %>%
@@ -62,7 +62,13 @@ tmp= c("empfohlen",
        "neutral genannt",
        "Antwort uneindeutig" )
 levels(daten$Empf_CDU)=tmp
-levels(daten$Empf_SPD)=tmp
+levels(daten$Empf_SPD)= c("empfohlen",
+                          "keine Einordnung",
+                          "nicht genannt",
+                          "wenn-dann-Konstrukt",
+                          "neutral genannt",
+                          "kritisch eingeordnet",
+                          "Antwort uneindeutig" )
 levels(daten$Empf_AFD)=tmp= c("empfohlen",
                               "explizit nicht empfohlen",
                               "keine Einordnung",
