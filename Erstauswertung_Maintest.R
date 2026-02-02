@@ -128,11 +128,11 @@ daten <- daten %>% filter(!(is.na(Codierung)))
 parteifarben <- c(
   "grey30",        # CDU
   "#E3000F",          # SPD
-  "deepskyblue3", # AfD
-  "#64A12D",    # Grüne
+  "#0489DB", # AfD
+  "#1AA037",    # Grüne
   "purple",       # Linke
-  "gold",         # FDP
-  "orange",       # Freie Wähler
+  "#FFEF00",         # FDP
+  "#EF8108",       # Freie Wähler
   "grey60"        # Sonstige
 )
 #Extra Variable für Parteinnamen
