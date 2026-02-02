@@ -310,6 +310,35 @@ ggplot(konstr_typ,
   theme_minimal(base_size=13) +
   theme(legend.position='bottom')
 
+
+ggplot(konstr_typ,
+       aes(x = Typ_Label, y = n, fill = Partei)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(
+    title = "Vergleich der Konstruktionstypen nach Partei",
+    x = "Konstruktionstyp",
+    y = "Häufigkeit",
+    fill = "Partei"
+  ) +
+  scale_fill_manual(
+    values = c(
+      "CDU" = "#000000",
+      "SPD" = "#E3000F",
+      "Gruene" = "#46962B",
+      "FDP" = "#FFED00",
+      "AfD" = "#009EE0",
+      "Linke" = "#BE3075",
+      "FW" = "#EF8108",
+      "Weitere" = "#808080"
+    )
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    legend.position = "bottom",
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+
 ############################################################
 #Score Nennungen 
 
