@@ -376,7 +376,16 @@ partei_scores <- df_long %>%
 
 
 ggplot(partei_scores, aes(x = reorder(Partei, Score), y = Score)) +
-  geom_col(fill=parteifarben) +       # Balken
+  geom_col(fill= c(
+    "CDU"="grey20",        # CDU
+    "SPD" ="#E3000F",          # SPD
+    "Grüne"=  "#1AA037",    # Grüne
+    "FDP"= "#FFEF00",         # FDP
+    "AfD"= "#0489DB", # AfD  
+    "Linke"="#BE3075", #Linke
+    "Freie Wähler"="#EF8108",       # Freie Wähler
+    "Weitere Parteien"="grey60"        # Sonstige
+  )) +       # Balken
   coord_flip() +                       # horizontale Balken
   labs(title = "Partei-Scores", x = "Partei", y = "Score") +
   theme_minimal()
