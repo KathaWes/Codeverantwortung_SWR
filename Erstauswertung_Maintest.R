@@ -1,3 +1,4 @@
+print(setwd(dirname(rstudioapi::getSourceEditorContext()$path)))
 
 # Plots in Pdf speichern
 pdf("KIPlots.pdf", width = 10, height = 5,title = "Gesamt")
@@ -132,14 +133,14 @@ daten <- daten %>% filter(!(is.na(Codierung)))
 
 #Frabzuordnung Partein
 parteifarben <- c(
-  "grey30",        # CDU
-  "#E3000F",          # SPD
-  "#0489DB", # AfD
-  "#1AA037",    # Grüne
-  "purple",       # Linke
-  "#FFEF00",         # FDP
-  "#EF8108",       # Freie Wähler
-  "grey60"        # Sonstige
+  "CDU"="grey20",        # CDU
+  "SPD" ="#E3000F",          # SPD
+  "AFD"= "#0489DB", # AfD  
+  "Gruene"=  "#1AA037",    # Grüne
+  "Linke"="#BE3075", #Linke
+ "FDP"= "#FFEF00",         # FDP
+  "FW"="#EF8108",       # Freie Wähler
+  "sonstige"="grey60"        # Sonstige
 )
 #Extra Variable für Parteinnamen
 parteinamen <- c("CDU","SPD","AfD","Grüne","Linke","FDP","Freie Wähler","Sonstige")
@@ -179,7 +180,7 @@ boxplot(
   names = parteinamen,
   col = parteifarben,
   main = "Vergleich der Antwortlänge je nach Partei",
-  ylab = "Zeichenanzahl der Antwort"
+  ylab = "Wortanzahlder Antwort"
 )
 
 #Boxplot Ausführlichkeit nach Ländern 
@@ -197,6 +198,7 @@ boxplot(
   data = daten,
   xlab = "KI-Modell",
   ylab = "Wortanzahl",
+  col="steelblue",
   main= "Antwortlänge nach KI-Modell sortiert "
 )
 
@@ -323,28 +325,28 @@ ggplot(konstr_typ,
 ggplot(konstr_typ,
        aes(x = Typ_Label, y = n, fill = Partei)) +
   geom_col(position = position_dodge(width = 0.8), width = 0.7) +
-  scale_fill_brewer(palette = "Set2") +
   labs(
-    title = "Vergleich der Konstruktionstypen nach Partei",
-    x = "Konstruktionstyp",
+    title = "Wenn-dann-Konstruktionen nach Partei",
+    x = "Themengebiet",
     y = "Häufigkeit",
     fill = "Partei"
   ) +
   scale_fill_manual(
     values = c(
-      "CDU" = "#000000",
-      "SPD" = "#E3000F",
-      "Gruene" = "#46962B",
-      "FDP" = "#FFED00",
-      "AfD" = "#009EE0",
-      "Linke" = "#BE3075",
-      "FW" = "#EF8108",
-      "Weitere" = "#808080"
-    )
+      "CDU"   = "grey20",
+      "SPD"   = "#E3000F",
+      "AfD"   = "#0489DB",
+      "Gruene"= "#1AA037",
+      "Linke"= "#BE3075",
+      "FDP"   ="#FFEF00",
+      "FW"    ="#EF8108",
+      "Weitere"="grey60"
+    ),
+    name="Partei"
   ) +
   theme_minimal(base_size = 13) +
   theme(
-    legend.position = "bottom",
+    legend.position = "right",
     axis.text.x = element_text(angle = 45, hjust = 1)
   )
 
@@ -374,7 +376,7 @@ partei_scores <- df_long %>%
 
 
 ggplot(partei_scores, aes(x = reorder(Partei, Score), y = Score)) +
-  geom_col(fill = "steelblue") +       # Balken
+  geom_col(fill=parteifarben) +       # Balken
   coord_flip() +                       # horizontale Balken
   labs(title = "Partei-Scores", x = "Partei", y = "Score") +
   theme_minimal()
@@ -440,19 +442,28 @@ ggplot(partei_scores_persona,
 
 ggplot(partei_scores_persona,
        aes(x = reorder(Persona, -Score), y = Score, fill = Partei)) +
-  geom_col(position = "dodge") +
-  scale_fill_brewer(
-    palette = "Set2",
-    name = "Partei"
+  geom_col(position = position_dodge(width = 0.8)) +
+  scale_fill_manual(
+    values = c(
+      "CDU"   = "grey20",
+      "SPD"   = "#E3000F",
+      "AfD"   = "#0489DB",
+      "Grüne"= "#1AA037",
+      "Linke"= "#BE3075",
+      "FDP"   ="#FFEF00",
+      "Freie Wähler"    ="#EF8108",
+      "Weitere Parteien"="grey60"
+    ),
+    name="Partei"
   ) +
-  labs(title = "Vergleich der Scores pro Partei innerhalb der Personas",
-       x = "Persona", y = "Gesamt-Score") +
+  labs(title="Vergleich der Scores pro Partei innerhalb der Personas",
+       x="Persona", y="Gesamt-Score") +
   theme_minimal() +
   theme(
-    legend.position = "bottom",
-    legend.title   = element_text(size=12, face="bold"),
-    legend.text    = element_text(size=10),
-    axis.text.x    = element_text(angle=45, hjust=1)
+    legend.position="bottom",
+    legend.title=element_text(size=12, face="bold"),
+    legend.text=element_text(size=10),
+    axis.text.x=element_text(angle=45,hjust=1)
   )
 
 
@@ -463,8 +474,8 @@ analyse_partei_daten <- function(df, person_name = "Gesamt"){
   #-------------------------------
   # Vorbereitung: Farben & Parteinamen
   parteifarben <- c(
-    "grey30", "red", "deepskyblue3", "#64A12D",
-    "purple", "gold", "orange", "grey60"
+    "grey20", "red", "deepskyblue3", "#64A12D",
+    "#BE3075", "gold", "orange", "grey60"
   )
   parteinamen <- c("CDU","SPD","AfD","Grüne","Linke","FDP","Freie Wähler","Sonstige")
   
@@ -674,7 +685,7 @@ ggplot(abweichungen_long, aes(x = Partei, y = Abweichung, fill = Partei)) +
 ################### Empfehlungs Analyse
 
 # Erste Übersicht: Verteilung der Anzahl Empfehlungen
-ggplot(daten, aes(x = Empf_Anzahl)) +
+ggplot(daten, aes(x = fct_infreq(Empf_Anzahl))) +
   geom_bar(fill = "steelblue",width=.7) +
   labs(title = "Verteilung der Anzahl von Empfehlungen",
        x = "Kategorie der Empfehlung",
@@ -783,6 +794,14 @@ ggplot(empf_Persona_Linke,
   theme_minimal(base_size=13) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+ggplot(empf_Persona_FW,
+       aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
+  geom_col(fill="steelblue", width=.6) +     
+  labs(title="FW-Empfehlungen nach Persona",
+       x="Persona", y="Häufigkeit") +
+  theme_minimal(base_size=13) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
 ggplot(empf_Persona_FDP,
        aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
   geom_col(fill="steelblue", width=.6) +     
@@ -809,6 +828,7 @@ liste_empf <- list(
   Gruene   = empf_Persona_Gruene,
   Linke    = empf_Persona_Linke,
   FDP      = empf_Persona_FDP,
+  FW       = empf_Persona_FW,
   Weitere  = empf_Persona_Weitere
 )
 
@@ -822,15 +842,26 @@ empf_persona_all <- bind_rows(lapply(names(liste_empf), function(p){
 ggplot(empf_persona_all,
        aes(x=Persona, y=Anzahl, fill=Partei)) +
   geom_col(position=position_dodge(width=.8), width=.7) +
-  scale_fill_manual(values=c(
-    "CDU"="grey30",
-    "SPD"="#E3000F",
-    "AfD"="deepskyblue3",
-    "Gruene"="#64A12D",
-    "Linke"="purple",
-    "FDP"="gold",
-    "Weitere"="grey60"
-  ), name="Partei") +
+  # scale_fill_manual(values=c(
+  #   "CDU"="grey20",
+  #   "SPD"="#E3000F",
+  #   "AfD"="deepskyblue3",
+  #   "Gruene"="#64A12D",
+  #   "Linke"="#BE3075",
+  #   "FDP"="gold",
+  #   "Weitere"="grey60"
+  # ), name="Partei") +
+  scale_fill_manual(
+    values = c(
+      "CDU"   = "grey20",
+      "SPD"   = "#E3000F",
+      "AfD"   = "#0489DB",
+      "Gruene"= "#1AA037",
+      "Linke"= "#BE3075",
+      "FDP"   ="#FFEF00",
+      "FW"    ="#EF8108",
+      "Weitere"="grey60"
+  ),name="Partei") +
   labs(title="Vergleich der Empfehlungen nach Persona und Partei",
        subtitle="Alle Parteien im direkten Vergleich pro Persona",
        x="Persona", y="Häufigkeit") +

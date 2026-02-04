@@ -99,15 +99,16 @@ daten <- daten %>%
 daten <- daten %>% filter(!(is.na(Codierung)))
 
 #Frabzuordnung Partein
+
 parteifarben <- c(
-  "grey30",        # CDU
-  "#E3000F",          # SPD
-  "deepskyblue3", # AfD
-  "#64A12D",    # Grüne
-  "purple",       # Linke
-  "gold",         # FDP
-  "orange",       # Freie Wähler
-  "grey60"        # Sonstige
+  "CDU"="grey20",        # CDU
+  "SPD" ="#E3000F",          # SPD
+  "AFD"= "#0489DB", # AfD  
+  "Gruene"=  "#1AA037",    # Grüne
+  "Linke"="#BE3075", #Linke
+  "FDP"= "#FFEF00",         # FDP
+  "FW"="#EF8108",       # Freie Wähler
+  "sonstige"="grey60"        # Sonstige
 )
 #Extra Variable für Parteinnamen
 parteinamen <- c("CDU","SPD","AfD","Grüne","Linke","FDP","Freie Wähler","Sonstige")
@@ -138,6 +139,57 @@ bp <- barplot(haeufigkeiten,
               col=parteifarben)
 # absolute Häufigkeit über Balken
 text(bp, haeufigkeiten, labels=haeufigkeiten, pos=3, cex=1.2)
+
+# In relative Häufigkeiten umwandeln (Prozentwerte)
+rel_haeufigkeiten <- haeufigkeiten / sum(haeufigkeiten) * 100
+
+#Umfragewerte (in Prozent)
+umfragewerte <- c(
+  CDU = 29,
+  SPD = 26,
+  AfD = 18,
+  Grüne = 10,
+  Linke = 6,
+  'Freie Wähler'= 4,
+  Sonstige = 7
+)
+
+# Maximale Werte für Y-Achse bestimmen (inklusive Umfragewerte)
+max_y <- max(c(rel_haeufigkeiten, umfragewerte)) * 1.25   # etwas Platz oben schaffen
+
+# Barplot mit relativen Werten
+bp2<- barplot(rel_haeufigkeiten,
+              names.arg = parteinamen,
+              ylim=c(0, max_y),
+              main = "Relative Häufigkeit der Parteinennungen",
+              xlab = "Partei",
+              ylab = "Anteil an allen Nennungen (%)",
+              col = parteifarben)
+
+# Prozentwerte über Balken schreiben
+text(bp2,
+     rel_haeufigkeiten,
+     labels = paste0(round(rel_haeufigkeiten, 1), "%"),
+     pos = 3,
+     cex = 1.2)
+
+
+# Horizontale Linien für Umfragewerte einzeichnen
+segments(x0=bp2 - par("cxy")[1], 
+         x1=bp2 + par("cxy")[1], 
+         y0=umfragewerte[parteinamen], 
+         col="black", lwd=3)
+
+# Legende hinzufügen
+legend("topright",
+       legend=c("Umfragewert (Stand 22.01.2026)"),
+       col=c("black"),
+       lty=c(1),
+       lwd=c(4),
+       bty="n",
+       cex=1)
+
+
 
 #Boxplot Ausführlichkeit der Partein
 boxplot(
@@ -434,8 +486,8 @@ analyse_partei_daten <- function(df, person_name = "Gesamt"){
   #-------------------------------
   # Vorbereitung: Farben & Parteinamen
   parteifarben <- c(
-    "grey30", "red", "deepskyblue3", "#64A12D",
-    "purple", "gold", "orange", "grey60"
+    "grey20", "red", "#0489DB", "#1AA037",
+    "#BE3075", "#FFEF00", "#EF8108", "grey60"
   )
   parteinamen <- c("CDU","SPD","AfD","Grüne","Linke","FDP","Freie Wähler","Sonstige")
   
@@ -792,12 +844,12 @@ ggplot(empf_persona_all,
        aes(x=Persona, y=Anzahl, fill=Partei)) +
   geom_col(position=position_dodge(width=.8), width=.7) +
   scale_fill_manual(values=c(
-    "CDU"="grey30",
+    "CDU"="grey20",
     "SPD"="#E3000F",
-    "AfD"="deepskyblue3",
-    "Gruene"="#64A12D",
-    "Linke"="purple",
-    "FDP"="gold",
+    "AfD"="#0489DB",
+    "Gruene"="#1AA037",
+    "Linke"="#BE3075",
+    "FDP"="#FFEF00",
     "Weitere"="grey60"
   ), name="Partei") +
   labs(title="Vergleich der Empfehlungen nach Persona und Partei",
