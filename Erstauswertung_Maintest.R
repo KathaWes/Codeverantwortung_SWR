@@ -762,66 +762,81 @@ ggplot(empf_Persona,
   theme(axis.text.x=element_text(angle=45,hjust=1),
         legend.position='bottom')
 
-# Partei-spezifische Empfehlungen je Persona 
+# Partei-spezifische Empfehlungen je Persona - CDU
 ggplot(empf_Persona_CDU,
-       aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
-  geom_col(fill="steelblue", width=.6) +      
+       aes(x=fct_reorder(Persona, Anzahl, sum), y=Anzahl,
+       fill = Empf_CDU)) +
+  geom_col(width=.6) +      
   labs(title="CDU-Empfehlungen nach Persona",
        x="Persona", y="Häufigkeit") +
   theme_minimal(base_size=13) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+# Partei-spezifische Empfehlungen je Persona - SPD
 ggplot(empf_Persona_SPD,
-       aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
-  geom_col(fill="steelblue", width=.6) +     
+       aes(x=fct_reorder(Persona, Anzahl, sum), y=Anzahl,
+       fill = Empf_SPD)) +
+  geom_col(width=.6) +     
   labs(title="SPD-Empfehlungen nach Persona",
        x="Persona", y="Häufigkeit") +
   theme_minimal(base_size=13) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+# Partei-spezifische Empfehlungen je Persona - AFD
 ggplot(empf_Persona_AFD,
-       aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
-  geom_col(fill="steelblue", width=.6) +   
+       aes(x=fct_reorder(Persona, Anzahl, sum), y=Anzahl,
+           fill = Empf_AFD)) +
+  geom_col(width=.6) +  
   labs(title="Afd-Empfehlungen nach Persona",
        x="Persona", y="Häufigkeit") +
   theme_minimal(base_size=13) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+# Partei-spezifische Empfehlungen je Persona - Grüne
 ggplot(empf_Persona_Gruene,
-       aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
-  geom_col(fill="steelblue", width=.6) +    
+       aes(x=fct_reorder(Persona, Anzahl, sum), y=Anzahl,
+           fill = Empf_Gruene)) +
+  geom_col(width=.6) +    
   labs(title="Grüne-Empfehlungen nach Persona",
        x="Persona", y="Häufigkeit") +
   theme_minimal(base_size=13) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+# Partei-spezifische Empfehlungen je Persona - Linke
 ggplot(empf_Persona_Linke,
-       aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
-  geom_col(fill="steelblue", width=.6) +   
+       aes(x=fct_reorder(Persona, Anzahl, sum), y=Anzahl,
+            fill = Empf_Linke)) +
+  geom_col(width=.6) +    
   labs(title="Linke-Empfehlungen nach Persona",
        x="Persona", y="Häufigkeit") +
   theme_minimal(base_size=13) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+# Partei-spezifische Empfehlungen je Persona - Freie Wähler
 ggplot(empf_Persona_FW,
-       aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
-  geom_col(fill="steelblue", width=.6) +     
+       aes(x=fct_reorder(Persona, Anzahl, sum), y=Anzahl,
+           fill = Empf_FW)) +
+  geom_col(width=.6) +     
   labs(title="FW-Empfehlungen nach Persona",
        x="Persona", y="Häufigkeit") +
   theme_minimal(base_size=13) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+# Partei-spezifische Empfehlungen je Persona - FDP
 ggplot(empf_Persona_FDP,
-       aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
-  geom_col(fill="steelblue", width=.6) +     
+       aes(x=fct_reorder(Persona, Anzahl, sum), y=Anzahl,
+           fill = Empf_FDP)) +
+  geom_col(width=.6) +   
   labs(title="FDP-Empfehlungen nach Persona",
        x="Persona", y="Häufigkeit") +
   theme_minimal(base_size=13) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+# Partei-spezifische Empfehlungen je Persona - Weitere
 ggplot(empf_Persona_Weitere,
-       aes(x=fct_reorder(Persona, Anzahl), y=Anzahl)) +
-  geom_col(fill="steelblue", width=.6) +     
+       aes(x=fct_reorder(Persona, Anzahl, sum), y=Anzahl,
+           fill = Empf_Weitere)) +
+  geom_col(width=.6) +      
   labs(title="Weitere-Empfehlungen nach Persona",
        x="Persona", y="Häufigkeit") +
   theme_minimal(base_size=13) +
