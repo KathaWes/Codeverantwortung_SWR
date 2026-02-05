@@ -879,6 +879,8 @@ ggplot(empf_persona_all,
         legend.position='bottom',
         legend.title=element_text(face='bold'))
 
+
+#Grafik Empfehlungen nach Persona nach Partein aufgetrennte - noch nicht lesbar
 ggplot(empf_persona_all,
        aes(x=fct_reorder(Persona, Anzahl), y=Anzahl, fill=Partei)) +
   geom_col(fill="steelblue", width=.7) +     # gleiche Farbe für Übersicht oder eigene Farben per Palette
@@ -888,6 +890,8 @@ ggplot(empf_persona_all,
   theme_minimal(base_size=13) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+
+#Grafik zur Verteilung der Empfehlungskategorien - SPD
 ggplot(daten, aes(x = Empf_SPD)) +
   geom_bar(fill = "steelblue", width=.7) +
   labs(title="SPD – Verteilung der Empfehlungskategorien",
@@ -895,6 +899,7 @@ ggplot(daten, aes(x = Empf_SPD)) +
   theme_minimal(base_size=14)+
 theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+#Grafik zur Verteilung der Empfehlungskategorien - Linke
 ggplot(daten, aes(x = Empf_Linke)) +
   geom_bar(fill = "steelblue", width=.7) +
   labs(title="Linke – Verteilung der Empfehlungskategorien",
@@ -902,6 +907,7 @@ ggplot(daten, aes(x = Empf_Linke)) +
   theme_minimal(base_size=14)+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+#Grafik zur Verteilung der Empfehlungskategorien - AFD
 ggplot(daten, aes(x = Empf_AFD)) +
   geom_bar(fill="steelblue", width=.7) +
   labs(title="AfD – Verteilung der Empfehlungskategorien",
@@ -909,6 +915,7 @@ ggplot(daten, aes(x = Empf_AFD)) +
   theme_minimal(base_size=14)+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+#Grafik zur Verteilung der Empfehlungskategorien - Gruene
 ggplot(daten, aes(x = Empf_Gruene)) +
   geom_bar(fill="steelblue", width=.7) +
   labs(title="Grüne– Verteilung der Empfehlungskategorien",
@@ -916,6 +923,8 @@ ggplot(daten, aes(x = Empf_Gruene)) +
   theme_minimal(base_size=14)+
 theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+
+#Grafik zur Verteilung der Empfehlungskategorien - CDU
 ggplot(daten, aes(x = Empf_CDU) )+
   geom_bar(fill="steelblue", width=.7) +
   labs(title="CDU– Verteilung der Empfehlungskategorien",
@@ -930,6 +939,7 @@ ggplot(daten, aes(x = Empf_FDP)) +
   theme_minimal(base_size=14)+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+#Grafik zur Verteilung der Empfehlungskategorien - Freie Wähler
 ggplot(daten, aes(x = Empf_FW)) +
   geom_bar(fill="steelblue", width=.7) +
   labs(title="Freihe Wähler– Verteilung der Empfehlungskategorien",
