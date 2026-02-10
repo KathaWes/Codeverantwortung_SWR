@@ -988,5 +988,77 @@ ggplot(afd_summary,
   theme(axis.text.x=element_text(angle=45,hjust=1))
 
 
+
+
+# Nur Zeilen betrachten, in denen AfD überhaupt erwähnt oder bewertet wurde
+afd_einordnung <- daten %>%
+  filter(!is.na(Empf_AFD) & Empf_AFD != "nicht genannt")
+
+# Häufigkeit jeder Einordnung berechnen
+afd_summary <- afd_einordnung %>%
+  group_by(Empf_AFD) %>%
+  summarise(
+    n = n(),                                       # Anzahl der Nennungen
+    Anteil = n() / nrow(afd_einordnung) * 100      # relativer Anteil (%)
+  ) %>%
+  arrange(desc(n))                                 # nach Häufigkeit sortieren
+
+# Ausgabe der Übersichtstabelle
+afd_summary
+
+# Visualisierung: Wie oft wird die AfD wie eingeordnet?
+ggplot(afd_summary,
+       aes(x = reorder(Empf_AFD, -n), y = n)) +
+  geom_col(fill = "deepskyblue3", width = .7) +
+  geom_text(aes(label = paste0(round(Anteil,1), "%")),
+            vjust = -0.5, size = 4) +
+  labs(title = "Einordnungen der AfD bei Nennung",
+       subtitle = "Nur Antworten berücksichtigt, in denen die AfD tatsächlich erwähnt wurde",
+       x = "Einordnungskategorie",
+       y = "Anzahl der Nennungen") +
+  theme_minimal(base_size=13) +
+  theme(axis.text.x=element_text(angle=45,hjust=1)) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15)))   # mehr Platz oben
+##############################
+# Tests
+
+# Kontingenztabelle erstellen
+tab <- table(long_konstr$Partei, long_konstr$Typ_Label)
+
+# Chi-Quadrat-Test durchführen
+chi_test <- chisq.test(tab)
+
+chi_test
+# 
+# 	Pearson's Chi-squared test
+# 
+# data:  tab
+# X-squared = 437.26, df = 49, p-value < 2.2e-16
+
+
+#--> estimmte Konstruktionstypen treten bei 
+# manchen Parteien häufiger auf als erwartet.
+
+
+# Sicherstellen, dass Persona enthalten ist
+long_konstr_persona <- daten %>%
+  select(Persona, starts_with("K_")) %>%
+  pivot_longer(cols = starts_with("K_"),
+               names_to = "Partei",
+               values_to = "Konstruktion") %>%
+  separate_rows(Konstruktion, sep = ",") %>%
+  mutate(Konstruktion = str_trim(Konstruktion)) %>%
+  separate(Konstruktion,
+           into = c("Typ_ID", "Typ_Label"),
+           sep = " - ",
+           convert = TRUE,
+           fill = "right") %>%
+  filter(Typ_ID != 1) # Kategorie „keine Wenn-Dann-Konstruktion“ ausschließen
+tab_persona <- table(long_konstr_persona$Persona, long_konstr_persona$Typ_Label)
+tab_persona
+chi_test_persona <- chisq.test(tab_persona)
+chi_test_persona
+# H_0 kann nnicht abgelehnt werden
+
 #----------------------------------------------------------------
 dev.off()
