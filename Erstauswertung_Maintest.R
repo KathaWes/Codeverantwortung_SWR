@@ -1081,7 +1081,7 @@ tab_persona <- table(long_konstr_persona$Persona, long_konstr_persona$Typ_Label)
 tab_persona
 chi_test_persona <- chisq.test(tab_persona)
 chi_test_persona
-# H_0 kann nnicht abgelehnt werden
+# H_0 kann nicht abgelehnt werden
 
 #----------------------------------------------------------------
 dev.off()
