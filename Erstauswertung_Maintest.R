@@ -281,7 +281,6 @@ long_konstr <- daten %>%
 # Häufigkeiten berechnen (für die ersten beiden Plots)
 konstr_counts <- long_konstr %>% count(Partei, Typ_Label)
 
-
 # Absolute Häufigkeiten pro Partei 
 ggplot(konstr_counts,
        aes(x=reorder_within(Typ_Label,n,Partei), y=n)) +
@@ -585,7 +584,31 @@ analyse_partei_daten <- function(df, person_name = "Gesamt"){
   
   print(p_score)
   
+  library(ggplot2)
+  library(dplyr)
   
+  
+  partei_position <- df_long %>%
+    filter(!Partei %in% ungültige_parteien) %>%
+    group_by(Partei) %>%
+    summarise(Durchschnitt_Position = mean(Position_num),
+              SD_Position = sd(Position_num),
+              n_Nennungen = n())
+  
+  ggplot(partei_position,
+         aes(y=reorder(Partei, Durchschnitt_Position), x=Durchschnitt_Position)) +
+    geom_point(size=4, color="steelblue") +
+    geom_errorbar(aes(xmin=Durchschnitt_Position-SD_Position,
+                      xmax=Durchschnitt_Position+SD_Position),
+                  width=.3, color="grey40") +
+    
+    scale_x_reverse(breaks=1:8) +   
+    
+    labs(title="Durchschnittliche Positionierung der Parteien in KI-Antworten",
+         subtitle="Je niedriger der Wert, desto früher wird die Partei genannt",
+         y="Partei", x="Mittlere Rangposition (1–8)") +
+    
+    theme_minimal(base_size=13)
   #-------------------------------
   # Durchschnittliche Antwortlänge pro Partei und KI
   

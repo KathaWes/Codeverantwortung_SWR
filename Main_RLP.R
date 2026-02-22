@@ -356,8 +356,7 @@ df_long <- daten %>%
   select(N1:N8) %>%   # nur N1 bis N8
   mutate(id = row_number()) %>%
   pivot_longer(cols = N1:N8, names_to = "Position", values_to = "Partei") %>%
-  mutate(Punkte = points_vec[as.numeric(sub("N", "", Position))])
-# Liste der unerwünschten Antworten
+  mutate(Position_num = as.numeric(sub("N", "", Position)))# Liste der unerwünschten Antworten
 ungültige_parteien <- c(
   "es wird keine weitere Partei genannt",
   "50 - ChatBot verweigert die Aussage",
@@ -402,6 +401,32 @@ ggplot(partei_scores,
   ) +
   theme_minimal() +
   theme(legend.position = "none")  # Legende hier überflüssig
+
+library(ggplot2)
+library(dplyr)
+
+
+partei_position <- df_long %>%
+  filter(!Partei %in% ungültige_parteien) %>%
+  group_by(Partei) %>%
+  summarise(Durchschnitt_Position = mean(Position_num),
+            SD_Position = sd(Position_num),
+            n_Nennungen = n())
+
+ggplot(partei_position,
+       aes(y=reorder(Partei, Durchschnitt_Position), x=Durchschnitt_Position)) +
+  geom_point(size=4, color="steelblue") +
+  geom_errorbar(aes(xmin=Durchschnitt_Position-SD_Position,
+                    xmax=Durchschnitt_Position+SD_Position),
+                width=.3, color="grey40") +
+  
+  scale_x_reverse(breaks=1:8) +   
+  
+  labs(title="Durchschnittliche Positionierung der Parteien in KI-Antworten",
+       subtitle="Je niedriger der Wert, desto früher wird die Partei genannt",
+       y="Partei", x="Mittlere Rangposition (1–8)") +
+  
+  theme_minimal(base_size=13)
 
 ############ PERSONAS ########################
 # Boxplot der Gesamt-Ausführlichkeit pro Persona
